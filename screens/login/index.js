@@ -13,7 +13,7 @@ import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 
-const Login = () => {
+const Login = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -34,7 +34,7 @@ const Login = () => {
           />
           <Text style={styles.textRegister}>Connectez-vous</Text>
         </View>
-        <View>
+        <View style={{margin: 10}}>
           <Input
             placeholder="Email / Numéo de téléphone"
             inputContainerStyle={{
@@ -54,6 +54,7 @@ const Login = () => {
       </ScrollView>
       <View>
         <Button
+          onPress={() => navigation.navigate('Home')}
           title="Se connecter"
           style={styles.signUpBtn}
           textStyle={styles.signUpBtnTxt}
@@ -62,7 +63,7 @@ const Login = () => {
           <Text style={styles.confidentialText}>
             Vous n’avez pas de compte ?
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.forgotPassText}> Créer un compte</Text>
           </TouchableOpacity>
         </View>
@@ -75,11 +76,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
-    margin: 10,
   },
   header: {
     height: 40,
     flexDirection: 'row',
+    margin: 10,
   },
   headerText: {
     marginHorizontal: 5,

@@ -15,7 +15,7 @@ import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const Register = () => {
+const Register = ({navigation}) => {
   const [sexeChoiceHomme, setSexeChoiceHomme] = React.useState(false);
   const [sexeChoiceFemme, setSexeChoiceFemme] = React.useState(false);
   const [sexeChoiceAutre, setSexeChoiceAutre] = React.useState(false);
@@ -145,7 +145,7 @@ const Register = () => {
           />
           <Text style={styles.textRegister}>Inscrivez-vous</Text>
         </View>
-        <View>
+        <View style={{margin: 10}}>
           <Input
             placeholder="Nom"
             rightIcon={{type: 'font-awesome', name: 'user-o', size: 20}}
@@ -234,6 +234,7 @@ const Register = () => {
           </Text>
         </View>
         <Button
+          onPress={() => navigation.navigate('Home')}
           title="S’inscrire"
           style={styles.signUpBtn}
           textStyle={styles.signUpBtnTxt}
@@ -247,11 +248,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
-    margin: 10,
   },
   header: {
     height: 40,
     flexDirection: 'row',
+    margin: 10,
   },
   headerText: {
     marginHorizontal: 5,

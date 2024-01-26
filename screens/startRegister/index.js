@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 
-const StartRegister = () => {
+const StartRegister = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -38,6 +38,7 @@ const StartRegister = () => {
       </View>
       <View style={styles.section2}>
         <Button
+          // onPress={navigation.navigate('Register')}
           title="Créez votre compte"
           icon2="envelope-o"
           style={styles.signUpBtn}

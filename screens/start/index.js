@@ -14,9 +14,9 @@ import Button from '../../components/Button';
 import {COLORS} from '../../variables/color';
 
 const image = require('../../assets/demarage.png');
-const Start = () => {
+const Start = ({navigation}) => {
   const handleSubmit = () => {
-    console.log('first');
+    navigation.navigate('StartRegister');
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +38,7 @@ const Start = () => {
           />
           <View style={styles.connectView}>
             <Text style={styles.textCompte}>Déjà un compte ?</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text style={styles.textConnectez}>Connectez vous</Text>
             </TouchableOpacity>
           </View>
