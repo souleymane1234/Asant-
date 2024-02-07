@@ -38,7 +38,7 @@ const StartRegister = ({navigation}) => {
       </View>
       <View style={styles.section2}>
         <Button
-          // onPress={navigation.navigate('Register')}
+          onPress={() => navigation.navigate('Register')}
           title="Créez votre compte"
           icon2="envelope-o"
           style={styles.signUpBtn}

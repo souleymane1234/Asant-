@@ -9,6 +9,9 @@ export const COLORS = {
     principal: '#4ABBEC',
     facebook_button: '#1C4ED8',
   },
+  cartnet: {
+    back: '#4ABBEC40',
+  },
   social: {
     apple_text: '#3A3A3A',
     google_text: '#3A3A3A',

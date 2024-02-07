@@ -21,7 +21,7 @@ import ButtonHome from '../../components/ButtonHome';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const image = require('../../assets/carte.png');
-const Home = () => {
+const Home = ({navigation}) => {
   const [actualité, setActualité] = useState(false);
   const [santé, setSanté] = useState(false);
   const [activité, setActivité] = useState(true);
@@ -306,7 +306,104 @@ const Home = () => {
 
   const Health = (
     <View style={{height: windowHeight, width: windowWidth}}>
-      <Text>event</Text>
+      <ScrollView>
+        <View style={styles.titleView}>
+          <View style={styles.titleTextView}>
+            <Text style={styles.title}>Santé</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../../assets/logoSansText.png')}
+              style={styles.titleImage}
+            />
+          </View>
+        </View>
+        <ImageBackground
+          source={require('../../assets/Rectangle.png')}
+          resizeMode="cover"
+          style={[styles.image, {margin: 10}]}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <View>
+              <Icon
+                size={20}
+                name="newspaper-variant-multiple-outline"
+                pack="material"
+                color={COLORS.white}
+              />
+            </View>
+            <View style={{marginHorizontal: 10}}>
+              <Text style={{color: COLORS.white}}>Préparation</Text>
+            </View>
+          </View>
+          <Image
+            source={require('../../assets/Controle.png')}
+            style={{alignSelf: 'center', margin: 10}}
+          />
+          <View style={{alignSelf: 'center', marginBottom: 10}}>
+            <Text
+              style={{
+                color: COLORS.white,
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: 16,
+              }}>
+              Comment te sens-tu aujourd’hui?
+            </Text>
+            <Text
+              style={{color: COLORS.white, textAlign: 'center', fontSize: 12}}>
+              Prenez une mesure pour obtenir votre score de préparation pour la
+              journée.
+            </Text>
+          </View>
+        </ImageBackground>
+        <TouchableOpacity
+          style={{
+            backgroundColor: COLORS.cartnet.back,
+            margin: 10,
+            borderRadius: 15,
+            height: 47,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{margin: 10, justifyContent: 'center'}}>
+            <Text
+              style={{fontSize: 14, color: COLORS.black, fontWeight: 'bold'}}>
+              Définissez votre objectif santé
+            </Text>
+          </View>
+          <View style={{margin: 10, justifyContent: 'center'}}>
+            <Image source={require('../../assets/chevron-right.png')} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: COLORS.cartnet.back,
+            margin: 10,
+            borderRadius: 15,
+            marginBottom: 80,
+          }}
+          onPress={() => navigation.navigate('HealthBook')}>
+          <Text
+            style={{
+              fontSize: 18,
+              color: COLORS.black,
+              fontWeight: 'bold',
+              margin: 10,
+            }}>
+            Mon carnet de santé
+          </Text>
+          <Image
+            source={require('../../assets/doc1.png')}
+            style={{alignSelf: 'center'}}
+          />
+        </TouchableOpacity>
+        {/* <View style={{backgroundColor: '#000'}}>
+          <Image
+            source={require('../../assets/Controle.png')}
+            style={{width: '98%', alignSelf: 'center', margin: 10}}
+          />
+        </View> */}
+      </ScrollView>
     </View>
   );
 
@@ -320,8 +417,17 @@ const Home = () => {
     <View style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
         <View style={styles.titleView}>
-          <Text style={styles.title}>Historique</Text>
+          <View style={styles.titleTextView}>
+            <Text style={styles.title}>Historique</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../../assets/logoSansText.png')}
+              style={styles.titleImage}
+            />
+          </View>
         </View>
+
         {/* section 1 start  */}
         <View style={styles.section1View}>
           <TouchableOpacity style={styles.selectSection1Button}>
@@ -602,7 +708,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   //   History styles start
+  titleImage: {
+    width: 20,
+  },
   titleView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     margin: 10,
   },
   title: {

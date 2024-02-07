@@ -7,6 +7,7 @@ import StartRegister from '../../screens/startRegister';
 import Register from '../../screens/register';
 import Login from '../../screens/login';
 import Home from '../../screens/home';
+import HealthBook from '../../screens/healthBook';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,13 @@ const Router = props => {
         <Stack.Screen
           name={'Home'}
           component={Home}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={'HealthBook'}
+          component={HealthBook}
           options={{
             headerShown: false,
           }}
