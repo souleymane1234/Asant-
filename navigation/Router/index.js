@@ -8,6 +8,8 @@ import Register from '../../screens/register';
 import Login from '../../screens/login';
 import Home from '../../screens/home';
 import HealthBook from '../../screens/healthBook';
+import PatientBook from '../../screens/patientBook';
+import VaccineCome from '../../screens/vaccineCome';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +55,20 @@ const Router = props => {
         <Stack.Screen
           name={'HealthBook'}
           component={HealthBook}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={'PatientBook'}
+          component={PatientBook}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={'VaccineCome'}
+          component={VaccineCome}
           options={{
             headerShown: false,
           }}

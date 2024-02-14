@@ -4,7 +4,7 @@ export const COLORS = {
   bg_primary: '#ffd1d6',
 
   input_border_color: '#5A5D5F',
-
+  certificatMedicaleColor: '#4FB791',
   button: {
     principal: '#4ABBEC',
     facebook_button: '#1C4ED8',

@@ -36,15 +36,20 @@ const HealthBook = ({navigation}) => {
           </Text>
         </View>
         <ImageBackground
-          source={require('../../assets/Vector.png')}
+          source={require('../../assets/carnetSante.png')}
           resizeMode="cover"
           style={[styles.image]}></ImageBackground>
         <TouchableOpacity
-          style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            marginBottom: 10,
+          }}
+          onPress={() => navigation.navigate('PatientBook')}>
           <View>
             <Image
-              source={require('../../assets/photoTatiana.png')}
-              style={{width: 90}}
+              source={require('../../assets/profil.jpeg')}
+              style={{width: 80, height: 80, borderRadius: 50}}
             />
           </View>
           <View style={{justifyContent: 'center'}}>
@@ -73,8 +78,8 @@ const HealthBook = ({navigation}) => {
           }}>
           <View>
             <Image
-              source={require('../../assets/fille.png')}
-              style={{width: 90}}
+              source={require('../../assets/profil.jpeg')}
+              style={{width: 80, height: 80, borderRadius: 50}}
             />
           </View>
           <View style={{justifyContent: 'center'}}>
@@ -87,7 +92,10 @@ const HealthBook = ({navigation}) => {
         <TouchableOpacity
           style={{flexDirection: 'row', justifyContent: 'space-around'}}>
           <View>
-            <Image source={require('../../assets/fils.png')} />
+            <Image
+              source={require('../../assets/profil.jpeg')}
+              style={{width: 80, height: 80, borderRadius: 50}}
+            />
           </View>
           <View style={{justifyContent: 'center'}}>
             <Text>Tatiana {'\n'} moi</Text>
