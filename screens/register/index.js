@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -14,15 +14,18 @@ import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import ImagePicker from 'react-native-image-crop-picker';
+import ImgToBase64 from 'react-native-image-base64';
+import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 
 const Register = ({navigation}) => {
-  const [sexeChoiceHomme, setSexeChoiceHomme] = React.useState(false);
-  const [sexeChoiceFemme, setSexeChoiceFemme] = React.useState(false);
-  const [sexeChoiceAutre, setSexeChoiceAutre] = React.useState(false);
-  const [myDate, setMyDate] = React.useState(new Date());
-  const [mode, setMode] = React.useState('date');
-  const [show, setShow] = React.useState(false);
-  const [text, setText] = React.useState('Date de naissance');
+  const [sexeChoiceHomme, setSexeChoiceHomme] = useState(false);
+  const [sexeChoiceFemme, setSexeChoiceFemme] = useState(false);
+  const [sexeChoiceAutre, setSexeChoiceAutre] = useState(false);
+  const [myDate, setMyDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState('Date de naissance');
   // data state
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
@@ -31,6 +34,10 @@ const Register = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [adresse, setAdresse] = useState('');
   const [photo, setPhoto] = useState('');
+  const [imageBase64, setImageBase64] = useState('');
+  const [title, setTitle] = useState('');
+  const [Spinner, setSpinner] = React.useState(false);
+  const [maData, setMaData] = useState();
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || myDate;
@@ -38,12 +45,13 @@ const Register = ({navigation}) => {
     setMyDate(currentDate);
 
     let tempDate = new Date(currentDate);
-    let fDate = tempDate.getDate();
-    '/' +
+    let fDate =
+      tempDate.getFullYear() +
+      '/' +
       (tempDate.getMonth() + 1) +
       '/' +
-      tempDate.getFullYear() +
-      setText(fDate);
+      tempDate.getDate();
+    setText(fDate);
     console.log(fDate);
   };
   const showMode = currentMode => {
@@ -64,6 +72,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(true);
               setSexeChoiceFemme(false);
               setSexeChoiceAutre(false);
+              setTitle('Mr');
             }}>
             <Text style={styles.sexeChoiceTextActif}>Homme</Text>
             <View style={[styles.sexeLineActif, {width: 65}]}></View>
@@ -74,6 +83,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(true);
               setSexeChoiceFemme(false);
               setSexeChoiceAutre(false);
+              setTitle('Mr');
             }}>
             <Text style={styles.sexeChoiceTextNoActif}>Homme</Text>
             <View style={[styles.sexeLineNoActif, {width: 65}]}></View>
@@ -87,6 +97,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(true);
               setSexeChoiceFemme(false);
               setSexeChoiceAutre(false);
+              setTitle('Mr');
             }}>
             <Text style={styles.sexeChoiceTextActif}>Femme</Text>
             <View style={[styles.sexeLineActif, {width: 65}]}></View>
@@ -97,6 +108,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(false);
               setSexeChoiceFemme(true);
               setSexeChoiceAutre(false);
+              setTitle('Mme');
             }}>
             <Text style={styles.sexeChoiceTextNoActif}>Femme</Text>
             <View style={[styles.sexeLineNoActif, {width: 65}]}></View>
@@ -110,6 +122,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(true);
               setSexeChoiceFemme(false);
               setSexeChoiceAutre(false);
+              setTitle('Mr');
             }}>
             <Text style={styles.sexeChoiceTextActif}>
               Je préfère ne pas le dire
@@ -122,6 +135,7 @@ const Register = ({navigation}) => {
               setSexeChoiceHomme(false);
               setSexeChoiceFemme(false);
               setSexeChoiceAutre(true);
+              setTitle('Yel');
             }}>
             <Text style={styles.sexeChoiceTextNoActif}>
               Je préfère ne pas le dire
@@ -138,16 +152,15 @@ const Register = ({navigation}) => {
     myHeaders.append('Content-Type', 'application/json');
 
     const raw = JSON.stringify({
-      avatar:
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAALRSURBVHgB1ZlNchJREMe7ewbEMmXhIla5IycQTiAskiJmobmBnsDcgOQGcgIrJ5BVQskCPEG4QcjKKmNVpjSRGOC13UMNgfA1g8A8fwuYmo+af3VP93vv/xAWJP/5PJ1KbWTRhTcAmAHELAGkmTmt1xHRY4YWA3to+Ksx0KjubjZgQRAiUjy9zKs4QnoXiAr9MhUPXOn8MeXa3vNmpGfD3tgXiCV5IA9LgAEa3O28r+6+aIW5f65QTfGTjaclicQBrAAG/Nh26ahReObNum+m0OLptwwlknVgzsAqQWyZzl1hVnRp2oXXX75nnUTybOUiFXmHBmRb3jntlokRVZFITj1qsSwBr8OmUNsZL7QxoWtL93Q80+3kHn4GI6nXwolZpOJryNevRrI5IlSrO2aRfUTD464pDZ8apN5PuZs4B4swXS4Eo9kgougmPoFl6AAzONYfrXJAOgMLCaLajyjRB7AUdPCt/68/e7UfVzL2rrtnhsX77TpbVKxd5i0WqaRTt90skVnObGiVaPqJCV+B5bDOBQjQ5rT7kEMvpeotGInmIZMjsryQAtIE/wkkjdQD+/GIZWUIliPrqhbJhxpp2RoP7IlQuADLUQODDHIFLEddFkq5btPygvL8aV5FFv7iER2DrSD4Gff7qM3pV59K/32h1e3NhnpBYBmqKTDT6P4kH4FlqIkWHA+EalTleyiDJUjdlIdNiJGxPuk4h8zYgphRDe2bX4fD50aE+h2gd1eIs12pSNXQ2N8a0TA2e9JwsxhV8YhFD6G3P8l+nDjNOxE3TcWu9zOQyRH3Cic7ky3zuUYuOsk64mpXAUG6FzJyFX3wUYJyq+wGWt3tm5+5eV5+hM0Gia74U0vdbJDe7bfFEETevlGfSl5ygOjI/lJUR1r3nnrHMlmvhBU4eBL+AXVZ1MBQbwD7y+7MvXgRhSBVzE025kLF3V5fNx+2nbD8BV7qRLqRANQnAAAAAElFTkSuQmCC',
-      title: 'Mme',
-      firstname: 'SuperAdmins',
-      lastname: 'AdminAdmins',
-      phone: '0102030401',
-      email: 'azz@gmail.com',
-      password: '01020304',
-      address: 'cocody',
-      birthday: '2024/10/10',
+      avatar: 'data:image/jpeg;base64,' + imageBase64,
+      title: title,
+      firstname: nom,
+      lastname: prenom,
+      phone: numero,
+      email: email,
+      password: password,
+      address: adresse,
+      birthday: text,
     });
 
     const requestOptions = {
@@ -156,27 +169,65 @@ const Register = ({navigation}) => {
       body: raw,
       redirect: 'follow',
     };
+    setSpinner(!Spinner);
     fetch('https://asante-web.vercel.app/api/public/users', requestOptions)
-      .then(response => response.text())
+      .then(response => response.json())
       .then(result => console.log(result))
-      .catch(error => console.error(error));
+      .then(result => {
+        setSpinner(false);
+        console.log(result);
+        setMaData(result);
+        navigation.navigate('Home', {
+          Data: result,
+        });
+        setSpinner(false);
+      })
 
-    // fetch('https://trocplus.ci/api/login', requestOptions)
-    //   .then(response => response.json())
-    //   .then(result => {
-    //     console.log(result);
-    //     navigation.navigate('HomeScreen', {
-    //       Id: result.user.id,
-    //       Token: result.token,
-    //       Data: result,
-    //     });
-    //   })
-    //   .catch(error => console.log('mon erreur de connexion', error));
+      .catch(error => console.error(error));
   };
+  console.log('testttttt', nom, prenom, numero, email, password, adresse, text);
+
+  const openCamera = async () => {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      multiple: true,
+      cropping: true,
+    }).then(result => {
+      setPhoto1(result.path);
+    });
+  };
+
+  const pickImage = async () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(result => {
+      setPhoto(result.path);
+      console.log(photo);
+      ImgToBase64.getBase64String(result.path).then(base64String => {
+        setImageBase64(base64String);
+        console.log('base', imageBase64);
+      });
+    });
+  };
+  console.log('first', imageBase64);
+
+  const Loader = (
+    <OrientationLoadingOverlay
+      visible={Spinner}
+      color="white"
+      indicatorSize="large"
+      messageFontSize={10}
+      message="Votre compte est en cours de création"
+    />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
+      {Loader}
       <ScrollView>
         <TouchableOpacity
           style={styles.header}
@@ -199,7 +250,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Nom"
             rightIcon={{type: 'font-awesome', name: 'user-o', size: 20}}
-            onChangeText={nom => setEmail(nom)}
+            onChangeText={nom => setNom(nom)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -207,7 +258,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Prénom"
             rightIcon={{type: 'font-awesome', name: 'user-o', size: 20}}
-            onChangeText={prenom => setEmail(prenom)}
+            onChangeText={prenom => setPrenom(prenom)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -216,7 +267,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Numéro de téléphone"
             rightIcon={{type: 'font-awesome', name: 'mobile', size: 25}}
-            onChangeText={numero => setEmail(numero)}
+            onChangeText={numero => setNumero(numero)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -232,7 +283,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Mots de passe"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
-            onChangeText={password => setEmail(password)}
+            onChangeText={password => setPassword(password)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -240,7 +291,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Localisation"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
-            onChangeText={adresse => setEmail(adresse)}
+            onChangeText={adresse => setAdresse(adresse)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -272,13 +323,22 @@ const Register = ({navigation}) => {
           <View style={{marginBottom: 10}}>
             <Text style={styles.addMediaText}>Ajouter photo de profil</Text>
             <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity style={styles.selectMediaButton}>
+              <TouchableOpacity
+                style={styles.selectMediaButton}
+                onPress={() => pickImage()}>
                 <Text style={styles.selectMediaText}>Choisir un fichier</Text>
               </TouchableOpacity>
               <View style={{justifyContent: 'center'}}>
-                <Text style={{marginHorizontal: 10}}>
-                  Aucun fichier sélectionné
-                </Text>
+                {imageBase64 ? (
+                  <Text style={{marginHorizontal: 10}}>
+                    Fichier sélectionné
+                  </Text>
+                ) : (
+                  <Text style={{marginHorizontal: 10}}>
+                    Aucun fichier sélectionné {'\n'}veuillez réessayé s'il vous
+                    plait
+                  </Text>
+                )}
               </View>
             </View>
           </View>

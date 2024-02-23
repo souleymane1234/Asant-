@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -12,11 +12,55 @@ import {
 import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
+import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay';
 
 const Login = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [maData, setMaData] = useState();
+  const [Spinner, setSpinner] = useState(false);
+
+  const SendData = () => {
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+    };
+    setSpinner(!Spinner);
+    fetch(
+      'https://asante-web.vercel.app/api/public/users?username=' +
+        email +
+        '&password=' +
+        password,
+      requestOptions,
+    )
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .then(result => {
+        setSpinner(false);
+        console.log(result);
+        setMaData(result);
+        navigation.navigate('Home', {
+          Data: result,
+        });
+        setSpinner(false);
+      })
+      .catch(error => console.error(error));
+  };
+
+  const Loader = (
+    <OrientationLoadingOverlay
+      visible={Spinner}
+      color="white"
+      indicatorSize="large"
+      messageFontSize={10}
+      message="Veillez patienter un moment!!"
+    />
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
+      {Loader}
       <ScrollView>
         <TouchableOpacity
           style={styles.header}
@@ -38,12 +82,14 @@ const Login = ({navigation}) => {
         <View style={{margin: 10}}>
           <Input
             placeholder="Email / Numéo de téléphone"
+            onChangeText={email => setEmail(email)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
           />
           <Input
             placeholder="Mots de passe"
+            onChangeText={password => setPassword(password)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -55,7 +101,7 @@ const Login = ({navigation}) => {
       </ScrollView>
       <View>
         <Button
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => SendData()}
           title="Se connecter"
           style={styles.signUpBtn}
           textStyle={styles.signUpBtnTxt}
