@@ -16,7 +16,7 @@ import {COLORS} from '../../variables/color';
 const image = require('../../assets/demarage.png');
 const Start = ({navigation}) => {
   const handleSubmit = () => {
-    navigation.navigate('StartRegister');
+    navigation.navigate('Register');
   };
   return (
     <SafeAreaView style={styles.container}>

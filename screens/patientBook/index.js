@@ -19,14 +19,16 @@ const PatientBook = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
       <ScrollView>
-        <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.header}
+          onPress={() => navigation.goBack()}>
           <View style={{justifyContent: 'center'}}>
             <Image source={require('../../assets/chevron-left.png')} />
           </View>
           <View style={{justifyContent: 'center', marginHorizontal: 10}}>
             <Text style={styles.headerText}>Retour</Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             margin: 10,
@@ -137,8 +139,7 @@ const PatientBook = ({navigation}) => {
             width: '90%',
             backgroundColor: '#fff',
             borderRadius: 10,
-          }}
-          onPress={() => navigation.navigate('VaccineCome')}>
+          }}>
           <View style={{justifyContent: 'center', margin: 10}}>
             <Image
               style={{width: 60, height: 60, borderRadius: 50}}

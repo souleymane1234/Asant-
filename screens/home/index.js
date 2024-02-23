@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 import ButtonHome from '../../components/ButtonHome';
+import Carousel from 'pinar';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,6 +28,21 @@ const Home = ({navigation}) => {
   const [activité, setActivité] = useState(true);
   const [historique, setHistorique] = useState(false);
   const [profile, setProfile] = useState(false);
+
+  const images = [
+    {
+      name: 'exterior',
+      img: require('../../assets/fille.png'),
+    },
+    {
+      name: 'kitchen',
+      img: require('../../assets/fils.png'),
+    },
+    {
+      name: 'living area',
+      img: require('../../assets/photoTatiana.png'),
+    },
+  ];
 
   const BottomBar = (
     <View
@@ -274,26 +290,8 @@ const Home = ({navigation}) => {
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <View style={{flex: 4}}></View>
         <View style={styles.buttonView}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Icon
-              name="music"
-              pack="material"
-              size={30}
-              color={COLORS.white}
-              style={{alignSelf: 'center'}}
-            />
-          </TouchableOpacity>
           <TouchableOpacity style={styles.demarreButton}>
             <Text style={styles.demarreText}>Démarrer</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Icon
-              name="cog"
-              pack="material"
-              size={30}
-              color={COLORS.white}
-              style={{alignSelf: 'center'}}
-            />
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -375,7 +373,63 @@ const Home = ({navigation}) => {
             <Image source={require('../../assets/chevron-right.png')} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
+        <View style={styles.carouselContainer}>
+          <Carousel
+            style={styles.carousel}
+            showsControls={false}
+            dotStyle={styles.dotStyle}
+            activeDotStyle={[styles.dotStyle, {backgroundColor: 'white'}]}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: COLORS.cartnet.back,
+                margin: 10,
+                borderRadius: 15,
+                marginBottom: 80,
+                height: '100%',
+                width: '100%',
+              }}
+              onPress={() => navigation.navigate('HealthBook')}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: COLORS.black,
+                  fontWeight: 'bold',
+                  margin: 10,
+                }}>
+                Mon carnet de santé
+              </Text>
+              <Image
+                source={require('../../assets/doc1.png')}
+                style={{alignSelf: 'center'}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: COLORS.cartnet.back,
+                margin: 10,
+                borderRadius: 15,
+                marginBottom: 80,
+                height: '100%',
+                width: '100%',
+              }}
+              onPress={() => navigation.navigate('VaccineBook')}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: COLORS.black,
+                  fontWeight: 'bold',
+                  margin: 10,
+                }}>
+                Mon carnet de vaccination
+              </Text>
+              <Image
+                source={require('../../assets/doc1.png')}
+                style={{alignSelf: 'center'}}
+              />
+            </TouchableOpacity>
+          </Carousel>
+        </View>
+        {/* <TouchableOpacity
           style={{
             backgroundColor: COLORS.cartnet.back,
             margin: 10,
@@ -396,7 +450,7 @@ const Home = ({navigation}) => {
             source={require('../../assets/doc1.png')}
             style={{alignSelf: 'center'}}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* <View style={{backgroundColor: '#000'}}>
           <Image
             source={require('../../assets/Controle.png')}
@@ -528,7 +582,7 @@ const Home = ({navigation}) => {
             </View>
           </View>
         </View>
-        <View>
+        <View style={{marginBottom: 20}}>
           <Text style={styles.statText}>Records</Text>
           <View style={[styles.rowAndBetween, {margin: 10}]}>
             <View style={{width: '80%'}}>
@@ -682,10 +736,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   buttonView: {
-    flexDirection: 'row',
+    flexDirection: 'center',
     justifyContent: 'space-between',
     margin: 10,
-    flex: 1,
+    flex: 1.5,
+    alignSelf: 'center',
+    width: '100%',
+    marginBottom: 10,
   },
   iconButton: {
     backgroundColor: COLORS.button.principal,
@@ -696,10 +753,11 @@ const styles = StyleSheet.create({
   },
   demarreButton: {
     backgroundColor: COLORS.button.principal,
-    width: '65%',
+    width: '80%',
     borderRadius: 34,
     height: 50,
     justifyContent: 'center',
+    alignSelf: 'center',
   },
   demarreText: {
     textAlign: 'center',
@@ -825,6 +883,26 @@ const styles = StyleSheet.create({
   rowAndBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  dotStyle: {
+    width: 30,
+    height: 3,
+    backgroundColor: 'silver',
+    marginHorizontal: 3,
+    borderRadius: 3,
+  },
+  images: {
+    height: '100%',
+    width: '100%',
+    borderRadius: 20,
+  },
+  carousel: {
+    height: '100%',
+    width: '100%',
+  },
+  carouselContainer: {
+    height: 400,
+    marginHorizontal: 10,
   },
 });
 

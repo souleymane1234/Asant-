@@ -129,15 +129,16 @@ const Register = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
       <ScrollView>
-        <View style={styles.header}>
-          <Icon
-            name="arrow-left"
-            pack="material"
-            size={20}
-            color={COLORS.black}
-          />
-          <Text style={styles.headerText}>Retour</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.header}
+          onPress={() => navigation.goBack()}>
+          <View style={{justifyContent: 'center'}}>
+            <Image source={require('../../assets/chevron-left.png')} />
+          </View>
+          <View style={{justifyContent: 'center', marginHorizontal: 5}}>
+            <Text style={styles.headerText}>Retour</Text>
+          </View>
+        </TouchableOpacity>
         <View style={styles.logoView}>
           <Image
             source={require('../../assets/logoCouleur.png')}
@@ -184,7 +185,7 @@ const Register = ({navigation}) => {
           />
           <Input
             placeholder="Localisation"
-            rightIcon={{type: 'font-awesome', name: 'location', size: 20}}
+            rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
