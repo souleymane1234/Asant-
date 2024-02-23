@@ -264,10 +264,19 @@ const Home = ({navigation}) => {
         width: windowWidth,
       }}>
       <View style={styles.logoView}>
+        <Text></Text>
         <Image
           source={require('../../assets/logoSansText.png')}
           style={styles.logo}
         />
+        <TouchableOpacity
+          style={{justifyContent: 'center'}}
+          onPress={() => navigation.navigate('Setting')}>
+          <Image
+            source={require('../../assets/cog.png')}
+            style={[styles.logo]}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.timeView}>
         <Text style={styles.timeText}>00:00:00</Text>
@@ -463,7 +472,160 @@ const Home = ({navigation}) => {
 
   const Actuality = (
     <View style={{height: windowHeight, width: windowWidth}}>
-      <Text>Sport</Text>
+      <ScrollView>
+        <View style={styles.titleView}>
+          <View style={styles.titleTextView}>
+            <Text style={styles.title}>Actualité</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../../assets/logoSansText.png')}
+              style={styles.titleImage}
+            />
+          </View>
+        </View>
+        <View style={{margin: 10}}>
+          <Text style={styles.subtitle}>Sport</Text>
+          <Text style={{fontWeight: 'bold', color: COLORS.black}}>
+            Restez informé des événements, des résultats en direct, des analyses
+            d'experts.
+          </Text>
+        </View>
+        <View style={styles.carouselContainer}>
+          <Carousel
+            style={styles.carousel}
+            showsControls={false}
+            dotStyle={styles.dotStyle}
+            activeDotStyle={[styles.dotStyle, {backgroundColor: 'white'}]}>
+            <ImageBackground
+              source={require('../../assets/actualite/imageSport.png')}
+              resizeMode="cover"
+              style={[styles.image, {margin: 10, height: 400}]}>
+              <View style={{alignSelf: 'center', marginBottom: 10}}>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    textAlign: 'center',
+                    fontSize: 10,
+                  }}>
+                  Découvrez nos plans de courses {'\n'} qui s’adaptent à votre
+                  niveau
+                </Text>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    textAlign: 'center',
+                    fontSize: 30,
+                    fontWeight: 'bold',
+                  }}>
+                  Commencez {'\n'} à courir
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: COLORS.button.principal,
+                    width: 45,
+                    height: 45,
+                    borderRadius: 30,
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                  }}>
+                  <Image
+                    source={require('../../assets/actualite/chevronRight.png')}
+                    style={{alignSelf: 'center'}}
+                  />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+            <ImageBackground
+              source={require('../../assets/actualite/imageSport.png')}
+              resizeMode="cover"
+              style={[styles.image, {margin: 10, height: 400}]}>
+              <View style={{alignSelf: 'center', marginBottom: 10}}>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    textAlign: 'center',
+                    fontSize: 10,
+                  }}>
+                  Découvrez nos plans de courses {'\n'} qui s’adaptent à votre
+                  niveau
+                </Text>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    textAlign: 'center',
+                    fontSize: 30,
+                    fontWeight: 'bold',
+                  }}>
+                  Commencez {'\n'} à courir
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: COLORS.button.principal,
+                    width: 45,
+                    height: 45,
+                    borderRadius: 30,
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                  }}>
+                  <Image
+                    source={require('../../assets/actualite/chevronRight.png')}
+                    style={{alignSelf: 'center'}}
+                  />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </Carousel>
+        </View>
+        <View style={{margin: 10}}>
+          <View style={{marginBottom: 10}}>
+            <Text style={styles.subtitle}>Santé</Text>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: COLORS.black,
+                marginBottom: 10,
+              }}>
+              Tout savoir sur le traitement et la prévention du cancer du sein
+              L’ignorance est suicidaire.
+            </Text>
+            <Image
+              source={require('../../assets/actualite/cancer.png')}
+              style={{alignSelf: 'center'}}
+            />
+          </View>
+          <View style={{marginBottom: 10}}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: COLORS.black,
+                marginBottom: 10,
+              }}>
+              Le cancer de la prostate est une préoccupation majeure de santé
+              pour les hommes, (IRM) joue un rôle crucial dans sa gestion
+            </Text>
+            <Image
+              source={require('../../assets/actualite/vih.png')}
+              style={{alignSelf: 'center'}}
+            />
+          </View>
+          <View style={{marginBottom: 100}}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: COLORS.black,
+                marginBottom: 10,
+              }}>
+              Le cancer de la prostate est une préoccupation majeure de santé
+              pour les hommes, (IRM) joue un rôle crucial dans sa gestion
+            </Text>
+            <Image
+              source={require('../../assets/actualite/test.png')}
+              style={{alignSelf: 'center'}}
+            />
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 
@@ -664,9 +826,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   logoView: {
-    alignSelf: 'center',
-    top: 10,
     marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 10,
   },
   logo: {
     alignSelf: 'center',
@@ -778,6 +941,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: COLORS.black,
+  },
+  subtitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.black,
+    marginBottom: 10,
   },
   section1View: {
     flexDirection: 'row',

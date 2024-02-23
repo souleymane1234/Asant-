@@ -23,6 +23,14 @@ const Register = ({navigation}) => {
   const [mode, setMode] = React.useState('date');
   const [show, setShow] = React.useState(false);
   const [text, setText] = React.useState('Date de naissance');
+  // data state
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [numero, setNumero] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [adresse, setAdresse] = useState('');
+  const [photo, setPhoto] = useState('');
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || myDate;
@@ -125,6 +133,47 @@ const Register = ({navigation}) => {
     </View>
   );
 
+  const SendData = () => {
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    const raw = JSON.stringify({
+      avatar:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAALRSURBVHgB1ZlNchJREMe7ewbEMmXhIla5IycQTiAskiJmobmBnsDcgOQGcgIrJ5BVQskCPEG4QcjKKmNVpjSRGOC13UMNgfA1g8A8fwuYmo+af3VP93vv/xAWJP/5PJ1KbWTRhTcAmAHELAGkmTmt1xHRY4YWA3to+Ksx0KjubjZgQRAiUjy9zKs4QnoXiAr9MhUPXOn8MeXa3vNmpGfD3tgXiCV5IA9LgAEa3O28r+6+aIW5f65QTfGTjaclicQBrAAG/Nh26ahReObNum+m0OLptwwlknVgzsAqQWyZzl1hVnRp2oXXX75nnUTybOUiFXmHBmRb3jntlokRVZFITj1qsSwBr8OmUNsZL7QxoWtL93Q80+3kHn4GI6nXwolZpOJryNevRrI5IlSrO2aRfUTD464pDZ8apN5PuZs4B4swXS4Eo9kgougmPoFl6AAzONYfrXJAOgMLCaLajyjRB7AUdPCt/68/e7UfVzL2rrtnhsX77TpbVKxd5i0WqaRTt90skVnObGiVaPqJCV+B5bDOBQjQ5rT7kEMvpeotGInmIZMjsryQAtIE/wkkjdQD+/GIZWUIliPrqhbJhxpp2RoP7IlQuADLUQODDHIFLEddFkq5btPygvL8aV5FFv7iER2DrSD4Gff7qM3pV59K/32h1e3NhnpBYBmqKTDT6P4kH4FlqIkWHA+EalTleyiDJUjdlIdNiJGxPuk4h8zYgphRDe2bX4fD50aE+h2gd1eIs12pSNXQ2N8a0TA2e9JwsxhV8YhFD6G3P8l+nDjNOxE3TcWu9zOQyRH3Cic7ky3zuUYuOsk64mpXAUG6FzJyFX3wUYJyq+wGWt3tm5+5eV5+hM0Gia74U0vdbJDe7bfFEETevlGfSl5ygOjI/lJUR1r3nnrHMlmvhBU4eBL+AXVZ1MBQbwD7y+7MvXgRhSBVzE025kLF3V5fNx+2nbD8BV7qRLqRANQnAAAAAElFTkSuQmCC',
+      title: 'Mme',
+      firstname: 'SuperAdmins',
+      lastname: 'AdminAdmins',
+      phone: '0102030401',
+      email: 'azz@gmail.com',
+      password: '01020304',
+      address: 'cocody',
+      birthday: '2024/10/10',
+    });
+
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+    };
+    fetch('https://asante-web.vercel.app/api/public/users', requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.error(error));
+
+    // fetch('https://trocplus.ci/api/login', requestOptions)
+    //   .then(response => response.json())
+    //   .then(result => {
+    //     console.log(result);
+    //     navigation.navigate('HomeScreen', {
+    //       Id: result.user.id,
+    //       Token: result.token,
+    //       Data: result,
+    //     });
+    //   })
+    //   .catch(error => console.log('mon erreur de connexion', error));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -150,6 +199,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Nom"
             rightIcon={{type: 'font-awesome', name: 'user-o', size: 20}}
+            onChangeText={nom => setEmail(nom)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -157,6 +207,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Prénom"
             rightIcon={{type: 'font-awesome', name: 'user-o', size: 20}}
+            onChangeText={prenom => setEmail(prenom)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -165,6 +216,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Numéro de téléphone"
             rightIcon={{type: 'font-awesome', name: 'mobile', size: 25}}
+            onChangeText={numero => setEmail(numero)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -172,6 +224,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Email"
             rightIcon={{type: 'font-awesome', name: 'envelope', size: 20}}
+            onChangeText={email => setEmail(email)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -179,6 +232,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Mots de passe"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
+            onChangeText={password => setEmail(password)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -186,6 +240,7 @@ const Register = ({navigation}) => {
           <Input
             placeholder="Localisation"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
+            onChangeText={adresse => setEmail(adresse)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}
@@ -235,7 +290,7 @@ const Register = ({navigation}) => {
           </Text>
         </View>
         <Button
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => SendData()}
           title="S’inscrire"
           style={styles.signUpBtn}
           textStyle={styles.signUpBtnTxt}
