@@ -12,12 +12,13 @@ import PatientBook from '../../screens/patientBook';
 import VaccineCome from '../../screens/vaccineCome';
 import VaccineBook from '../../screens/vaccineBook';
 import Setting from '../../screens/setting';
+import ChooseLocation from '../../screens/location';
 
 const Stack = createNativeStackNavigator();
 
 const Router = props => {
   return (
-    <NavigationContainer initialRouteName="Start">
+    <NavigationContainer initialRouteName="Home">
       <Stack.Navigator>
         <Stack.Screen
           name={'Start'}
@@ -85,6 +86,13 @@ const Router = props => {
         <Stack.Screen
           name={'Setting'}
           component={Setting}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={'ChooseLocation'}
+          component={ChooseLocation}
           options={{
             headerShown: false,
           }}

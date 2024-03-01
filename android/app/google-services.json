@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "518303176237",
+    "firebase_url": "https://asante-app-default-rtdb.firebaseio.com",
+    "project_id": "asante-app",
+    "storage_bucket": "asante-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518303176237:android:13664b727b03ec5fff4aa4",
+        "android_client_info": {
+          "package_name": "com.asante"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8AEmKmdXi3ITiVaUL8hie6lTuRQJp1Y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
