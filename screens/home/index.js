@@ -28,6 +28,7 @@ import {
   locationPermission,
   getCurrentLocation,
 } from '../../helper/helperFunction';
+import Line from '../../components/Line';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -37,7 +38,9 @@ const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const image = require('../../assets/carte.png');
-const Home = ({navigation}) => {
+const Home = ({navigation, route}) => {
+  const {data} = route.params;
+  console.log('data.........', data);
   const mapRef = useRef();
   const markerRef = useRef();
   const [state, setState] = useState({
@@ -45,7 +48,12 @@ const Home = ({navigation}) => {
       latitude: 30.7046,
       longitude: 77.1025,
     },
-    destinationCords: {},
+    destinationCords: {
+      latitude: 30.7046,
+      longitude: 77.1025,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    },
     isLoading: false,
     coordinate: new AnimatedRegion({
       latitude: 30.7046,
@@ -63,7 +71,48 @@ const Home = ({navigation}) => {
   const [activité, setActivité] = useState(true);
   const [historique, setHistorique] = useState(false);
   const [profile, setProfile] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const countRef = useRef(null);
+  const [maData, setMaData] = useState();
 
+  // function to handle the start button press
+  const handleStart = () => {
+    setIsActive(true);
+    setIsPaused(false);
+    countRef.current = setInterval(() => {
+      setTimer(timer => timer + 1);
+    }, 1000);
+  };
+  // function to handle the pause button press
+  const handlePause = () => {
+    clearInterval(countRef.current);
+    setIsPaused(true);
+  };
+  // function to handle the continue button press
+  const handleContinue = () => {
+    setIsPaused(false);
+    countRef.current = setInterval(() => {
+      setTimer(timer => timer + 1);
+    }, 1000);
+  };
+  // function to handle the reset button press
+  const handleReset = () => {
+    clearInterval(countRef.current);
+    setIsActive(false);
+    setIsPaused(false);
+    setTimer(0);
+  };
+  // calculate the time values for display
+  const formatTime = time => {
+    const hours = Math.floor(time / 360);
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
   const {
     curLoc,
     time,
@@ -77,7 +126,6 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     getLiveLocation();
-    onCenter();
   }, []);
 
   const getLiveLocation = async () => {
@@ -113,8 +161,8 @@ const Home = ({navigation}) => {
     console.log('this is data', data);
     updateState({
       destinationCords: {
-        latitude: data.destinationCords.latitude,
-        longitude: data.destinationCords.longitude,
+        latitude: 5.3183922,
+        longitude: -4.0219825,
       },
     });
   };
@@ -395,8 +443,11 @@ const Home = ({navigation}) => {
           />
         </TouchableOpacity>
       </View>
+      {/* <View style={styles.timerContainer}>
+        <Text style={styles.timer}>{formatTime(timer)}</Text>
+      </View> */}
       <View style={styles.timeView}>
-        <Text style={styles.timeText}>00:00:00</Text>
+        <Text style={styles.timeText}>{formatTime(timer)}</Text>
         <Text style={styles.timeSousText}>Durée</Text>
       </View>
       <View style={styles.resultViewGlobal}>
@@ -492,34 +543,47 @@ const Home = ({navigation}) => {
             position: 'absolute',
             bottom: 0,
             right: 0,
+            top: 0,
           }}
-          onPress={onCenter}>
+          onPress={() => onCenter()}>
           <Image source={imagePath.greenIndicator} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            backgroundColor: COLORS.button.principal,
-            width: '80%',
-            borderRadius: 34,
-            height: 40,
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: 10,
-          }}
-          onPress={onCenter}>
-          <Text style={styles.demarreText}>Démarrer</Text>
-        </TouchableOpacity>
+        {/* {!isActive && !isPaused ? ( */}
+
         <View style={styles.buttonView}></View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            bottom: 60,
+          }}>
+          <TouchableOpacity
+            style={styles.demarreButtonStop}
+            onPress={handleStart}>
+            <Text style={styles.demarreText}>Démarrer</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.demarreButtonStop}
+            onPress={handlePause}>
+            <Text style={styles.demarreText}>Stop</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.demarreButtonStop}
+            onPress={handleContinue}>
+            <Text style={styles.demarreText}>Continuer</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.demarreButtonStop}
+            onPress={handleReset}>
+            <Text style={styles.demarreText}>Reprendre</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* <View style={styles.logoView}>
         <Image source={require('../../assets/carte.png')} style={styles.logo} />
       </View> */}
-      <TouchableOpacity style={styles.demarreButton}>
-        <Text style={styles.demarreText}>Démarrer</Text>
-      </TouchableOpacity>
     </View>
   );
 
@@ -981,9 +1045,276 @@ const Home = ({navigation}) => {
 
   const Profil = (
     <View style={{height: windowHeight, width: windowWidth}}>
-      <View>
-        <Text>profil</Text>
-      </View>
+      <ScrollView>
+        <View style={styles.titleView}>
+          <View style={styles.titleTextView}>
+            <Text style={styles.title}>Profile</Text>
+          </View>
+          <View>
+            <Image
+              source={require('../../assets/cog.png')}
+              style={styles.titleImage}
+            />
+          </View>
+        </View>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+            backgroundColor: '#4ABBEC',
+            margin: 10,
+            borderRadius: 10,
+          }}
+          onPress={() => navigation.navigate('VaccineCome')}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <View>
+              <Image
+                source={require('../../assets/profil.jpeg')}
+                style={{width: 80, height: 80, borderRadius: 50}}
+              />
+            </View>
+            <View style={{justifyContent: 'center', marginHorizontal: 10}}>
+              <Text
+                style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
+                Tatiana
+              </Text>
+              <Text style={{fontSize: 12, color: COLORS.black}}>Tatiana</Text>
+            </View>
+          </View>
+          <View style={{justifyContent: 'center', margin: 10}}>
+            <Image source={require('../../assets/chevron-right.png')} />
+          </View>
+        </TouchableOpacity>
+        <View
+          style={{
+            backgroundColor: '#4ABBEC',
+            borderRadius: 10,
+            margin: 10,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{margin: 10}}>
+              <Image
+                source={require('../../assets/profile/mesure.png')}
+                style={{width: 80, height: 80, borderRadius: 50}}
+              />
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: COLORS.black,
+                  }}>
+                  180 cm
+                </Text>
+                <Image
+                  source={require('../../assets/profile/edit.png')}
+                  style={{marginHorizontal: 1, alignSelf: 'center'}}
+                />
+              </View>
+              <Text style={{textAlign: 'center'}}>Taille</Text>
+            </View>
+            <View style={{margin: 10}}>
+              <Image
+                source={require('../../assets/profile/tensiometre.png')}
+                style={{width: 80, height: 80, alignSelf: 'center'}}
+              />
+              <View style={{flexDirection: 'row'}}>
+                <Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    120 /
+                  </Text>
+                  {'\n'}
+                  <Text style={{fontSize: 12, textAlign: 'center'}}>SYS</Text>
+                </Text>
+                <Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    80 /
+                  </Text>
+                  {'\n'}
+                  <Text style={{fontSize: 12, textAlign: 'center'}}>DIA</Text>
+                </Text>
+                <Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    69
+                  </Text>
+                  {'\n'}
+                  <Text style={{fontSize: 12, textAlign: 'center'}}>PULL</Text>
+                </Text>
+                <Image
+                  source={require('../../assets/profile/edit.png')}
+                  style={{marginHorizontal: 1, top: 5}}
+                />
+              </View>
+              {/* <Text style={{textAlign: 'center'}}>SYS DIA PULL</Text> */}
+            </View>
+            <View style={{margin: 10}}>
+              <Image
+                source={require('../../assets/profile/poids.png')}
+                style={{width: 80, height: 80, borderRadius: 50}}
+              />
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: COLORS.black,
+                  }}>
+                  70 Kg
+                </Text>
+                <Image
+                  source={require('../../assets/profile/edit.png')}
+                  style={{marginHorizontal: 1, alignSelf: 'center'}}
+                />
+              </View>
+              <Text style={{textAlign: 'center'}}>Poids</Text>
+            </View>
+          </View>
+          <View>
+            <Text style={{textAlign: 'center'}}>
+              <Text style={{fontSize: 14, color: COLORS.black}}>
+                État de santé :
+              </Text>
+              <Text style={{color: '#1CC700', fontSize: 16}}>Optimale</Text>
+            </Text>
+          </View>
+          <View>
+            <Text
+              style={{textAlign: 'center', color: COLORS.black, fontSize: 12}}>
+              Mis à jour depuis le Lun. 08 Janv. 2024
+            </Text>
+          </View>
+        </View>
+        <View style={{margin: 10}}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: COLORS.black,
+              marginBottom: 20,
+            }}>
+            Mes objectifs
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{justifyContent: 'center'}}>
+              <Image
+                source={require('../../assets/profile/medaille.png')}
+                style={{alignSelf: 'center'}}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginHorizontal: 20,
+              }}>
+              <Text style={{fontSize: 40, alignSelf: 'center'}}>0</Text>
+              <Text style={{alignSelf: 'center'}}>
+                {' '}
+                Objectif terminés {'\n'} Aujourdh'hui
+              </Text>
+            </View>
+          </View>
+        </View>
+        <Line />
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+            margin: 10,
+          }}
+          onPress={() => navigation.navigate('VaccineCome')}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <View>
+              <Image source={require('../../assets/profile/objectif.png')} />
+            </View>
+            <View style={{justifyContent: 'center', marginHorizontal: 10}}>
+              <Text
+                style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
+                Créer objectif
+              </Text>
+            </View>
+          </View>
+          <View style={{justifyContent: 'center', margin: 10}}>
+            <Image source={require('../../assets/chevron-right.png')} />
+          </View>
+        </TouchableOpacity>
+        <View style={{margin: 10}}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: COLORS.black,
+              marginBottom: 20,
+            }}>
+            Mon entrainement
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{justifyContent: 'center'}}>
+              <Image
+                source={require('../../assets/profile/agenda.png')}
+                style={{alignSelf: 'center'}}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginHorizontal: 20,
+              }}>
+              <Text style={{alignSelf: 'center'}}>
+                {' '}
+                Aucun entraînement {'\n'} Enregisté
+              </Text>
+            </View>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 50,
+            margin: 10,
+          }}
+          onPress={() => navigation.navigate('VaccineCome')}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <View>
+              <Image source={require('../../assets/profile/run.png')} />
+            </View>
+            <View style={{justifyContent: 'center', marginHorizontal: 10}}>
+              <Text
+                style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
+                Créer entraînement
+              </Text>
+            </View>
+          </View>
+          <View style={{justifyContent: 'center', margin: 10}}>
+            <Image source={require('../../assets/chevron-right.png')} />
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
   return (
@@ -1133,16 +1464,27 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignSelf: 'center',
+    position: 'absolute',
+    bottom: 60,
+  },
+  demarreButtonStop: {
+    backgroundColor: COLORS.button.principal,
+    width: '20%',
+    borderRadius: 34,
+    height: 50,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    bottom: 0,
   },
   demarreText: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 12,
     color: COLORS.white,
     fontWeight: 'bold',
   },
   //   History styles start
   titleImage: {
-    width: 20,
+    // width: 20,
   },
   titleView: {
     flexDirection: 'row',

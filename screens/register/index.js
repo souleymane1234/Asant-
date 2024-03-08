@@ -281,6 +281,7 @@ const Register = ({navigation}) => {
             }}
           />
           <Input
+            secureTextEntry
             placeholder="Mots de passe"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
             onChangeText={password => setPassword(password)}

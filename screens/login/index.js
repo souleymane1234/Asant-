@@ -17,7 +17,7 @@ import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay'
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [maData, setMaData] = useState();
+  const [maData, setMaData] = useState({});
   const [Spinner, setSpinner] = useState(false);
 
   const SendData = () => {
@@ -34,13 +34,13 @@ const Login = ({navigation}) => {
       requestOptions,
     )
       .then(response => response.json())
-      .then(result => console.log(result))
       .then(result => {
         setSpinner(false);
-        console.log(result);
+        // console.log(result);
         setMaData(result);
+        console.log('first', maData);
         navigation.navigate('Home', {
-          Data: result,
+          data: maData,
         });
         setSpinner(false);
       })
@@ -88,6 +88,7 @@ const Login = ({navigation}) => {
             }}
           />
           <Input
+            secureTextEntry
             placeholder="Mots de passe"
             onChangeText={password => setPassword(password)}
             inputContainerStyle={{
