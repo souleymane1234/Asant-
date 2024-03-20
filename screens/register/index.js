@@ -9,6 +9,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
@@ -36,6 +37,8 @@ const Register = ({navigation}) => {
   const [photo, setPhoto] = useState('');
   const [imageBase64, setImageBase64] = useState('');
   const [title, setTitle] = useState('');
+  const [taille, setTaille] = useState('');
+  const [poids, setPoids] = useState('');
   const [Spinner, setSpinner] = React.useState(false);
   const [maData, setMaData] = useState();
 
@@ -161,6 +164,8 @@ const Register = ({navigation}) => {
       password: password,
       address: adresse,
       birthday: text,
+      height: taille,
+      weight: poids,
     });
 
     const requestOptions = {
@@ -172,15 +177,22 @@ const Register = ({navigation}) => {
     setSpinner(!Spinner);
     fetch('https://asante-web.vercel.app/api/public/users', requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
       .then(result => {
-        setSpinner(false);
-        console.log(result);
-        setMaData(result);
-        navigation.navigate('Home', {
-          Data: result,
-        });
-        setSpinner(false);
+        setSpinner(!Spinner);
+        if (!result.message) {
+          setSpinner(false);
+          console.log(result);
+          navigation.navigate('Home', {
+            data: result,
+          });
+          setSpinner(false);
+        } else {
+          setSpinner(false);
+          Alert.alert(
+            'Vous avez mal saisie une donnée, votre email et numero de telephone doivent etre unique',
+          );
+        }
+        console.log('Patience');
       })
 
       .catch(error => console.error(error));
@@ -293,6 +305,22 @@ const Register = ({navigation}) => {
             placeholder="Localisation"
             rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
             onChangeText={adresse => setAdresse(adresse)}
+            inputContainerStyle={{
+              borderColor: COLORS.input_border_color,
+            }}
+          />
+          <Input
+            placeholder="Taille"
+            // rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
+            onChangeText={taille => setTaille(taille)}
+            inputContainerStyle={{
+              borderColor: COLORS.input_border_color,
+            }}
+          />
+          <Input
+            placeholder="Poids"
+            // rightIcon={{type: 'font-awesome', name: 'lock', size: 20}}
+            onChangeText={poids => setPoids(poids)}
             inputContainerStyle={{
               borderColor: COLORS.input_border_color,
             }}

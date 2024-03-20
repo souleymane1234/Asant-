@@ -14,7 +14,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 
-const PatientBook = ({navigation}) => {
+const PatientBook = ({navigation, route}) => {
+  const {data} = route.params;
+  console.log('first', data);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -66,7 +68,7 @@ const PatientBook = ({navigation}) => {
             </View>
             <View style={{marginHorizontal: 10, justifyContent: 'center'}}>
               <Text style={{fontSize: 12, color: COLORS.gray}}>
-                Lesman Tatiana
+                {data?.lastname} {data?.firstname}
               </Text>
             </View>
           </View>
@@ -85,7 +87,7 @@ const PatientBook = ({navigation}) => {
         </View>
         <View style={{margin: 10}}>
           <Text style={{fontSize: 20, color: COLORS.black}}>
-            Carnet de Tatiana
+            Carnet de {data?.firstname}
           </Text>
         </View>
         {/* <ImageBackground

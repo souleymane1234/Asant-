@@ -15,7 +15,8 @@ import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 import Carousel from 'pinar';
 
-const VaccineCome = ({navigation}) => {
+const VaccineCome = ({navigation, route}) => {
+  const {data} = route.params;
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -67,7 +68,7 @@ const VaccineCome = ({navigation}) => {
             </View>
             <View style={{marginHorizontal: 10, justifyContent: 'center'}}>
               <Text style={{fontSize: 12, color: COLORS.gray}}>
-                Lesman Tatiana
+                {data?.firstname} {data?.lastname}
               </Text>
             </View>
           </View>
@@ -86,7 +87,7 @@ const VaccineCome = ({navigation}) => {
         </View>
         <View style={{margin: 10}}>
           <Text style={{fontSize: 20, color: COLORS.black}}>
-            Carnet de Tatiana
+            Carnet de {data?.firstname}
           </Text>
         </View>
         {/* <ImageBackground

@@ -8,6 +8,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
@@ -35,16 +36,31 @@ const Login = ({navigation}) => {
     )
       .then(response => response.json())
       .then(result => {
-        setSpinner(false);
-        // console.log(result);
-        setMaData(result);
-        console.log('first', maData);
-        navigation.navigate('Home', {
-          data: maData,
-        });
-        setSpinner(false);
+        setSpinner(!Spinner);
+        if (!result.message) {
+          setSpinner(false);
+          navigation.navigate('Home', {
+            data: result,
+          });
+          setSpinner(false);
+        } else {
+          setSpinner(false);
+          Alert.alert(
+            'Identifiants incorrects',
+            'Nom d’utilisateur ou mot de passe incorrect',
+          );
+        }
+        console.log('Patience');
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        setSpinner(false);
+        console.error(error);
+        Alert.alert(
+          'Identifiants incorrects',
+          'Veulliez vérifié votre nom d’utilisateur ou mot de passe',
+        );
+        setSpinner(false);
+      });
   };
 
   const Loader = (

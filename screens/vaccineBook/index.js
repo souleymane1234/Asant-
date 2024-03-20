@@ -14,7 +14,8 @@ import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
 import Button from '../../components/Button';
 
-const VaccineBook = ({navigation}) => {
+const VaccineBook = ({navigation, route}) => {
+  const {data} = route.params;
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor={COLORS.white} />
@@ -34,7 +35,7 @@ const VaccineBook = ({navigation}) => {
             Mon carnet de vaccination
           </Text>
           <Text style={{fontSize: 30, color: COLORS.black, fontWeight: 'bold'}}>
-            Bonjour Tatiana
+            Bonjour {data?.firstname}
           </Text>
         </View>
         <ImageBackground
@@ -47,15 +48,21 @@ const VaccineBook = ({navigation}) => {
             justifyContent: 'space-around',
             marginBottom: 10,
           }}
-          onPress={() => navigation.navigate('VaccineCome')}>
+          onPress={() =>
+            navigation.navigate('VaccineCome', {
+              data: data,
+            })
+          }>
           <View>
             <Image
-              source={require('../../assets/profil.jpeg')}
+              source={{uri: data?.avatar}}
               style={{width: 80, height: 80, borderRadius: 50}}
             />
           </View>
           <View style={{justifyContent: 'center'}}>
-            <Text>Tatiana {'\n'} Moi</Text>
+            <Text>
+              {data?.firstname} {'\n'} Moi
+            </Text>
           </View>
           <View style={{justifyContent: 'center'}}>
             <Image source={require('../../assets/chevron-right.png')} />

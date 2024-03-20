@@ -13,6 +13,7 @@ import VaccineCome from '../../screens/vaccineCome';
 import VaccineBook from '../../screens/vaccineBook';
 import Setting from '../../screens/setting';
 import ChooseLocation from '../../screens/location';
+import EditProfile from '../../screens/editProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,13 @@ const Router = props => {
         <Stack.Screen
           name={'ChooseLocation'}
           component={ChooseLocation}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={'EditProfile'}
+          component={EditProfile}
           options={{
             headerShown: false,
           }}

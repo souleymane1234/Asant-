@@ -29,6 +29,7 @@ import {
   getCurrentLocation,
 } from '../../helper/helperFunction';
 import Line from '../../components/Line';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -39,32 +40,9 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const image = require('../../assets/carte.png');
 const Home = ({navigation, route}) => {
-  const {data} = route.params;
-  console.log('data.........', data);
+  const {data, taille, poids, img} = route.params;
   const mapRef = useRef();
   const markerRef = useRef();
-  const [state, setState] = useState({
-    curLoc: {
-      latitude: 30.7046,
-      longitude: 77.1025,
-    },
-    destinationCords: {
-      latitude: 30.7046,
-      longitude: 77.1025,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    },
-    isLoading: false,
-    coordinate: new AnimatedRegion({
-      latitude: 30.7046,
-      longitude: 77.1025,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    }),
-    time: 0,
-    distance: 0,
-    heading: 0,
-  });
 
   const [actualité, setActualité] = useState(false);
   const [santé, setSanté] = useState(false);
@@ -75,8 +53,33 @@ const Home = ({navigation, route}) => {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const countRef = useRef(null);
-  const [maData, setMaData] = useState();
+  const [imgB64, setImgB64] = useState(false);
+  const [center, setCenter] = useState(false);
 
+  const [state, setState] = useState({
+    curLoc: {
+      latitude: 5.316667,
+      longitude: -4.033333,
+    },
+    destinationCords: {
+      latitude: 5.316667,
+      longitude: -4.033333,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    },
+    isLoading: false,
+    coordinate: new AnimatedRegion({
+      latitude: 5.316667,
+      longitude: -4.033333,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    }),
+    time: 0,
+    distance: 0,
+    heading: 0,
+  });
+
+  console.log('first', data.height);
   // function to handle the start button press
   const handleStart = () => {
     setIsActive(true);
@@ -127,12 +130,37 @@ const Home = ({navigation, route}) => {
   useEffect(() => {
     getLiveLocation();
   }, []);
+  useEffect(() => {
+    getInitialLocation();
+  }, []);
+  useEffect(() => {
+    getInitialLocation();
+  }, []);
+
+  const getInitialLocation = async () => {
+    const locPermissionDenied = await locationPermission();
+    if (locPermissionDenied) {
+      const {latitude, longitude, heading} = await getCurrentLocation();
+      console.log('get live location after 1 second', heading);
+      animate(latitude, longitude);
+      updateState({
+        heading: heading,
+        destinationCords: {latitude, longitude},
+        coordinate: new AnimatedRegion({
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        }),
+      });
+    }
+  };
 
   const getLiveLocation = async () => {
     const locPermissionDenied = await locationPermission();
     if (locPermissionDenied) {
       const {latitude, longitude, heading} = await getCurrentLocation();
-      console.log('get live location after 4 second', heading);
+      // console.log('get live location after 6 second', heading);
       animate(latitude, longitude);
       updateState({
         heading: heading,
@@ -150,7 +178,7 @@ const Home = ({navigation, route}) => {
   useEffect(() => {
     const interval = setInterval(() => {
       getLiveLocation();
-    }, 6000);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -161,8 +189,8 @@ const Home = ({navigation, route}) => {
     console.log('this is data', data);
     updateState({
       destinationCords: {
-        latitude: 5.3183922,
-        longitude: -4.0219825,
+        latitude: 5.366988,
+        longitude: -3.963844,
       },
     });
   };
@@ -180,8 +208,8 @@ const Home = ({navigation, route}) => {
 
   const onCenter = () => {
     mapRef.current.animateToRegion({
-      latitude: curLoc.latitude,
-      longitude: curLoc.longitude,
+      latitude: [curLoc.latitude, destinationCords.latitude],
+      longitude: [curLoc.longitude, destinationCords.longitude],
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     });
@@ -193,7 +221,8 @@ const Home = ({navigation, route}) => {
       time: t,
     });
   };
-
+  const kal = distance.toFixed(0) * 100;
+  const imgFinal = 'data:image/jpeg;base64,' + imgB64;
   const images = [
     {
       name: 'exterior',
@@ -452,11 +481,11 @@ const Home = ({navigation, route}) => {
       </View>
       <View style={styles.resultViewGlobal}>
         <View style={styles.resultDistanceView}>
-          <Text style={styles.nombreDistance}>0,00</Text>
+          <Text style={styles.nombreDistance}>{distance.toFixed(0)}</Text>
           <Text style={styles.textDistance}>Distance (km)</Text>
         </View>
         <View style={styles.resultCaloriesView}>
-          <Text style={styles.nombreCalories}>0</Text>
+          <Text style={styles.nombreCalories}>{kal}</Text>
           <Text style={styles.textCalories}>Calories (kcal)</Text>
         </View>
         <View style={styles.resultRythmeView}>
@@ -472,12 +501,12 @@ const Home = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       </ImageBackground> */}
-      {distance !== 0 && time !== 0 && (
+      {/* {distance !== 0 && time !== 0 && (
         <View style={{alignItems: 'center', marginVertical: 16}}>
           <Text>Time left: {time.toFixed(0)} </Text>
           <Text>Distance left: {distance.toFixed(0)}</Text>
         </View>
-      )}
+      )} */}
       <View style={{flex: 1}}>
         <MapView
           ref={mapRef}
@@ -489,7 +518,7 @@ const Home = ({navigation, route}) => {
           }}>
           <Marker.Animated ref={markerRef} coordinate={coordinate}>
             <Image
-              source={imagePath.position}
+              source={imagePath.map}
               style={{
                 width: 40,
                 height: 40,
@@ -511,7 +540,7 @@ const Home = ({navigation, route}) => {
               origin={curLoc}
               destination={destinationCords}
               apikey={'AIzaSyDdaLdxFfrj3yVqi0iMlHqoBPnuhp34c7o'}
-              strokeWidth={6}
+              strokeWidth={2}
               strokeColor="red"
               optimizeWaypoints={true}
               onStart={params => {
@@ -538,16 +567,21 @@ const Home = ({navigation, route}) => {
             />
           )}
         </MapView>
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            top: 0,
-          }}
-          onPress={() => onCenter()}>
-          <Image source={imagePath.greenIndicator} />
-        </TouchableOpacity>
+        {center == false ? (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              top: 0,
+            }}
+            onPress={() => [onCenter(), setCenter(true)]}>
+            <Image source={imagePath.greenIndicator} />
+          </TouchableOpacity>
+        ) : (
+          <Text></Text>
+        )}
+
         {/* {!isActive && !isPaused ? ( */}
 
         <View style={styles.buttonView}></View>
@@ -601,7 +635,7 @@ const Home = ({navigation, route}) => {
             />
           </View>
         </View>
-        <ImageBackground
+        {/* <ImageBackground
           source={require('../../assets/Rectangle.png')}
           resizeMode="cover"
           style={[styles.image, {margin: 10}]}>
@@ -638,7 +672,7 @@ const Home = ({navigation, route}) => {
               journée.
             </Text>
           </View>
-        </ImageBackground>
+        </ImageBackground> */}
         <TouchableOpacity
           style={{
             backgroundColor: COLORS.cartnet.back,
@@ -673,7 +707,11 @@ const Home = ({navigation, route}) => {
                 height: '100%',
                 width: '100%',
               }}
-              onPress={() => navigation.navigate('HealthBook')}>
+              onPress={() =>
+                navigation.navigate('HealthBook', {
+                  data: data,
+                })
+              }>
               <Text
                 style={{
                   fontSize: 18,
@@ -697,7 +735,11 @@ const Home = ({navigation, route}) => {
                 height: '100%',
                 width: '100%',
               }}
-              onPress={() => navigation.navigate('VaccineBook')}>
+              onPress={() =>
+                navigation.navigate('VaccineBook', {
+                  data: data,
+                })
+              }>
               <Text
                 style={{
                   fontSize: 18,
@@ -804,6 +846,13 @@ const Home = ({navigation, route}) => {
                     borderRadius: 30,
                     justifyContent: 'center',
                     alignSelf: 'center',
+                  }}
+                  onPress={() => {
+                    setActualité(false);
+                    setSanté(false);
+                    setActivité(true);
+                    setHistorique(false);
+                    setProfile(false);
                   }}>
                   <Image
                     source={require('../../assets/actualite/chevronRight.png')}
@@ -1066,20 +1115,33 @@ const Home = ({navigation, route}) => {
             margin: 10,
             borderRadius: 10,
           }}
-          onPress={() => navigation.navigate('VaccineCome')}>
+          onPress={() =>
+            navigation.navigate('EditProfile', {
+              data: data,
+            })
+          }>
           <View style={{flexDirection: 'row', margin: 10}}>
             <View>
-              <Image
-                source={require('../../assets/profil.jpeg')}
-                style={{width: 80, height: 80, borderRadius: 50}}
-              />
+              {img ? (
+                <Image
+                  source={{uri: img}}
+                  style={{width: 80, height: 80, borderRadius: 50}}
+                />
+              ) : (
+                <Image
+                  source={{uri: data?.avatar}}
+                  style={{width: 80, height: 80, borderRadius: 50}}
+                />
+              )}
             </View>
             <View style={{justifyContent: 'center', marginHorizontal: 10}}>
               <Text
                 style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
-                Tatiana
+                {data?.firstname}
               </Text>
-              <Text style={{fontSize: 12, color: COLORS.black}}>Tatiana</Text>
+              <Text style={{fontSize: 12, color: COLORS.black}}>
+                {data?.lastname}
+              </Text>
             </View>
           </View>
           <View style={{justifyContent: 'center', margin: 10}}>
@@ -1103,14 +1165,25 @@ const Home = ({navigation, route}) => {
                 style={{width: 80, height: 80, borderRadius: 50}}
               />
               <View style={{flexDirection: 'row'}}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: COLORS.black,
-                  }}>
-                  180 cm
-                </Text>
+                {data?.height ? (
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    {data?.height} cm
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    180 cm
+                  </Text>
+                )}
                 <Image
                   source={require('../../assets/profile/edit.png')}
                   style={{marginHorizontal: 1, alignSelf: 'center'}}
@@ -1173,14 +1246,25 @@ const Home = ({navigation, route}) => {
                 style={{width: 80, height: 80, borderRadius: 50}}
               />
               <View style={{flexDirection: 'row'}}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: COLORS.black,
-                  }}>
-                  70 Kg
-                </Text>
+                {data?.weight ? (
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    {data?.weight} kg
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: COLORS.black,
+                    }}>
+                    70 kg
+                  </Text>
+                )}
                 <Image
                   source={require('../../assets/profile/edit.png')}
                   style={{marginHorizontal: 1, alignSelf: 'center'}}
@@ -1237,7 +1321,7 @@ const Home = ({navigation, route}) => {
           </View>
         </View>
         <Line />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -1259,7 +1343,7 @@ const Home = ({navigation, route}) => {
           <View style={{justifyContent: 'center', margin: 10}}>
             <Image source={require('../../assets/chevron-right.png')} />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={{margin: 10}}>
           <Text
             style={{
@@ -1291,7 +1375,7 @@ const Home = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -1313,7 +1397,7 @@ const Home = ({navigation, route}) => {
           <View style={{justifyContent: 'center', margin: 10}}>
             <Image source={require('../../assets/chevron-right.png')} />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </View>
   );
