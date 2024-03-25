@@ -69,17 +69,33 @@ export default function EditProfile({route, navigation}) {
     });
   };
   const img = 'data:image/jpeg;base64,' + imageBase64;
+  // const myHeaders = new Headers();
+  // myHeaders.append('Content-Type', 'application/json');
+
+  // const raw = JSON.stringify({
+  //   title: 'Mr',
+  // });
+
+  // const requestOptions = {
+  //   method: 'PUT',
+  //   headers: myHeaders,
+  //   body: raw,
+  //   redirect: 'follow',
+  // };
+
+  // fetch(
+  //   'https://postman-rest-api-learner.glitch.me//api/public/users?username=0987654321&password=1234',
+  //   requestOptions,
+  // )
+  //   .then(response => response.text())
+  //   .then(result => console.log(result))
+  //   .catch(error => console.error(error));
   const SendData = () => {
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
 
     const raw = JSON.stringify({
-      avatar: imageBase64,
-      height: taille,
-      weight: poids,
-      firstname: nom,
       lastname: prenom,
-      address: localisation,
     });
 
     const requestOptions = {
@@ -90,10 +106,7 @@ export default function EditProfile({route, navigation}) {
     };
     setSpinner(!Spinner);
     fetch(
-      'https://asante-web.vercel.app/api/public/users?username=' +
-        data.phone +
-        '&password=' +
-        data.password,
+      'https://postman-rest-api-learner.glitch.me//api/public/users?username=12341234&password=1234',
       requestOptions,
     )
       .then(response => response.json())

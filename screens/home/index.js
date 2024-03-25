@@ -55,6 +55,7 @@ const Home = ({navigation, route}) => {
   const countRef = useRef(null);
   const [imgB64, setImgB64] = useState(false);
   const [center, setCenter] = useState(false);
+  const [imc, setImc] = useState();
 
   const [state, setState] = useState({
     curLoc: {
@@ -79,7 +80,10 @@ const Home = ({navigation, route}) => {
     heading: 0,
   });
 
-  console.log('first', data.height);
+  // calcule de IMC
+  const height = data?.height;
+  const weight = data?.weight;
+  const Imc = weight / (height * height);
   // function to handle the start button press
   const handleStart = () => {
     setIsActive(true);
@@ -132,6 +136,7 @@ const Home = ({navigation, route}) => {
   }, []);
   useEffect(() => {
     getInitialLocation();
+    setImc(data.height / data?.width);
   }, []);
   useEffect(() => {
     getInitialLocation();
@@ -465,7 +470,11 @@ const Home = ({navigation, route}) => {
         />
         <TouchableOpacity
           style={{justifyContent: 'center'}}
-          onPress={() => navigation.navigate('Setting')}>
+          onPress={() =>
+            navigation.navigate('Setting', {
+              data: data,
+            })
+          }>
           <Image
             source={require('../../assets/cog.png')}
             style={[styles.logo]}
@@ -590,7 +599,7 @@ const Home = ({navigation, route}) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             width: '100%',
-            bottom: 60,
+            bottom: 80,
           }}>
           <TouchableOpacity
             style={styles.demarreButtonStop}
@@ -1099,19 +1108,25 @@ const Home = ({navigation, route}) => {
           <View style={styles.titleTextView}>
             <Text style={styles.title}>Profile</Text>
           </View>
-          <View>
+          <TouchableOpacity
+            style={{justifyContent: 'center'}}
+            onPress={() =>
+              navigation.navigate('Setting', {
+                data: data,
+              })
+            }>
             <Image
               source={require('../../assets/cog.png')}
-              style={styles.titleImage}
+              style={[styles.titleImage]}
             />
-          </View>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginBottom: 10,
-            backgroundColor: '#4ABBEC',
+            backgroundColor: COLORS.color_profil,
             margin: 10,
             borderRadius: 10,
           }}
@@ -1150,9 +1165,10 @@ const Home = ({navigation, route}) => {
         </TouchableOpacity>
         <View
           style={{
-            backgroundColor: '#4ABBEC',
+            backgroundColor: '#e4f5fc',
             borderRadius: 10,
             margin: 10,
+            alignContent: 'center',
           }}>
           <View
             style={{
@@ -1162,45 +1178,48 @@ const Home = ({navigation, route}) => {
             <View style={{margin: 10}}>
               <Image
                 source={require('../../assets/profile/mesure.png')}
-                style={{width: 80, height: 80, borderRadius: 50}}
+                style={{width: 70, height: 70, borderRadius: 50}}
               />
-              <View style={{flexDirection: 'row'}}>
+              <View
+                style={{
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 {data?.height ? (
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: 'bold',
                       color: COLORS.black,
+                      textAlign: 'center',
                     }}>
                     {data?.height} cm
                   </Text>
                 ) : (
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: 'bold',
                       color: COLORS.black,
+                      textAlign: 'center',
                     }}>
                     180 cm
                   </Text>
                 )}
-                <Image
-                  source={require('../../assets/profile/edit.png')}
-                  style={{marginHorizontal: 1, alignSelf: 'center'}}
-                />
+                <Text style={{fontSize: 12}}>Taille</Text>
               </View>
-              <Text style={{textAlign: 'center'}}>Taille</Text>
             </View>
             <View style={{margin: 10}}>
               <Image
                 source={require('../../assets/profile/tensiometre.png')}
-                style={{width: 80, height: 80, alignSelf: 'center'}}
+                style={{width: 70, height: 70, alignSelf: 'center'}}
               />
               <View style={{flexDirection: 'row'}}>
                 <Text>
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: 'bold',
                       color: COLORS.black,
                     }}>
@@ -1212,7 +1231,7 @@ const Home = ({navigation, route}) => {
                 <Text>
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: 'bold',
                       color: COLORS.black,
                     }}>
@@ -1224,7 +1243,7 @@ const Home = ({navigation, route}) => {
                 <Text>
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: 'bold',
                       color: COLORS.black,
                     }}>
@@ -1233,23 +1252,24 @@ const Home = ({navigation, route}) => {
                   {'\n'}
                   <Text style={{fontSize: 12, textAlign: 'center'}}>PULL</Text>
                 </Text>
-                <Image
-                  source={require('../../assets/profile/edit.png')}
-                  style={{marginHorizontal: 1, top: 5}}
-                />
               </View>
               {/* <Text style={{textAlign: 'center'}}>SYS DIA PULL</Text> */}
             </View>
             <View style={{margin: 10}}>
               <Image
                 source={require('../../assets/profile/poids.png')}
-                style={{width: 80, height: 80, borderRadius: 50}}
+                style={{width: 70, height: 70, borderRadius: 50}}
               />
-              <View style={{flexDirection: 'row'}}>
+              <View
+                style={{
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 {data?.weight ? (
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: 'bold',
                       color: COLORS.black,
                     }}>
@@ -1258,19 +1278,37 @@ const Home = ({navigation, route}) => {
                 ) : (
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: 'bold',
                       color: COLORS.black,
                     }}>
                     70 kg
                   </Text>
                 )}
-                <Image
-                  source={require('../../assets/profile/edit.png')}
-                  style={{marginHorizontal: 1, alignSelf: 'center'}}
-                />
+                <Text style={{fontSize: 12}}>Poids</Text>
               </View>
-              <Text style={{textAlign: 'center'}}>Poids</Text>
+            </View>
+          </View>
+          <View style={{alignSelf: 'center'}}>
+            <Image
+              source={require('../../assets/profile/masse-removebg-preview.png')}
+              style={{width: 80, height: 80, alignSelf: 'center'}}
+            />
+            <View
+              style={{
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: COLORS.black,
+                  textAlign: 'center',
+                }}>
+                Votre indice de masse corporelle est:
+              </Text>
+              <Text style={{fontSize: 12}}>{Imc.toFixed(5)}</Text>
             </View>
           </View>
           <View>
@@ -1278,7 +1316,24 @@ const Home = ({navigation, route}) => {
               <Text style={{fontSize: 14, color: COLORS.black}}>
                 État de santé :
               </Text>
-              <Text style={{color: '#1CC700', fontSize: 16}}>Optimale</Text>
+              {Imc < 18.5 ? (
+                <Text
+                  style={{color: '#09b3ed', fontSize: 16, fontWeight: 'bold'}}>
+                  Maigreur
+                </Text>
+              ) : 18.5 < Imc > 25 ? (
+                <Text style={{color: '#7bba31', fontSize: 16}}>Normal</Text>
+              ) : 25 < Imc > 30 ? (
+                <Text style={{color: '#f6a208', fontSize: 16}}>Surpoids</Text>
+              ) : 30 < Imc > 40 ? (
+                <Text style={{color: '#ef750b', fontSize: 16}}>
+                  Obésité modérée
+                </Text>
+              ) : (
+                <Text style={{color: '#e40d1b', fontSize: 16}}>
+                  Obésité sévère
+                </Text>
+              )}
             </Text>
           </View>
           <View>
@@ -1288,7 +1343,7 @@ const Home = ({navigation, route}) => {
             </Text>
           </View>
         </View>
-        <View style={{margin: 10}}>
+        <View style={{margin: 10, marginBottom: 60}}>
           <Text
             style={{
               fontSize: 20,
@@ -1321,30 +1376,7 @@ const Home = ({navigation, route}) => {
           </View>
         </View>
         <Line />
-        {/* <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 10,
-            margin: 10,
-          }}
-          onPress={() => navigation.navigate('VaccineCome')}>
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <View>
-              <Image source={require('../../assets/profile/objectif.png')} />
-            </View>
-            <View style={{justifyContent: 'center', marginHorizontal: 10}}>
-              <Text
-                style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
-                Créer objectif
-              </Text>
-            </View>
-          </View>
-          <View style={{justifyContent: 'center', margin: 10}}>
-            <Image source={require('../../assets/chevron-right.png')} />
-          </View>
-        </TouchableOpacity> */}
-        <View style={{margin: 10}}>
+        {/* <View style={{margin: 10}}>
           <Text
             style={{
               fontSize: 20,
@@ -1374,30 +1406,7 @@ const Home = ({navigation, route}) => {
               </Text>
             </View>
           </View>
-        </View>
-        {/* <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 50,
-            margin: 10,
-          }}
-          onPress={() => navigation.navigate('VaccineCome')}>
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <View>
-              <Image source={require('../../assets/profile/run.png')} />
-            </View>
-            <View style={{justifyContent: 'center', marginHorizontal: 10}}>
-              <Text
-                style={{fontSize: 16, fontWeight: 'bold', color: COLORS.black}}>
-                Créer entraînement
-              </Text>
-            </View>
-          </View>
-          <View style={{justifyContent: 'center', margin: 10}}>
-            <Image source={require('../../assets/chevron-right.png')} />
-          </View>
-        </TouchableOpacity> */}
+        </View> */}
       </ScrollView>
     </View>
   );

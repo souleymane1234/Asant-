@@ -3,6 +3,8 @@ export const COLORS = {
   primary_soft: '#ff8f9d',
   bg_primary: '#ffd1d6',
 
+  color_profil: '#e4f5fc',
+
   input_border_color: '#5A5D5F',
   certificatMedicaleColor: '#4FB791',
   button: {
