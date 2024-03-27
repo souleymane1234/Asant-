@@ -90,10 +90,6 @@ const PatientBook = ({navigation, route}) => {
             Carnet de {data?.firstname}
           </Text>
         </View>
-        {/* <ImageBackground
-          source={require('../../assets/tatianacarnet.png')}
-          resizeMode="cover"
-          style={[styles.image]}></ImageBackground> */}
         <Image
           style={[styles.image]}
           source={require('../../assets/tatianacarnet.png')}

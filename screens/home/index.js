@@ -8,28 +8,23 @@ import {
   View,
   Dimensions,
   Image,
-  FlatList,
   TouchableOpacity,
-  TouchableHighlight,
   ImageBackground,
   Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import styles from './style';
 import {COLORS} from '../../variables/color';
-import Button from '../../components/Button';
-import ButtonHome from '../../components/ButtonHome';
 import Carousel from 'pinar';
 import MapView, {Marker, AnimatedRegion} from 'react-native-maps';
 import {GOOGLE_MAP_KEY} from '../../constants/googleMapKey';
 import imagePath from '../../constants/imagePath';
 import MapViewDirections from 'react-native-maps-directions';
-import Loader from '../../components/Loader';
 import {
   locationPermission,
   getCurrentLocation,
 } from '../../helper/helperFunction';
 import Line from '../../components/Line';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -41,6 +36,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const image = require('../../assets/carte.png');
 const Home = ({navigation, route}) => {
   const {data, taille, poids, img} = route.params;
+  console.log('first????', data?.avatar);
   const mapRef = useRef();
   const markerRef = useRef();
 
@@ -55,7 +51,6 @@ const Home = ({navigation, route}) => {
   const countRef = useRef(null);
   const [imgB64, setImgB64] = useState(false);
   const [center, setCenter] = useState(false);
-  const [imc, setImc] = useState();
 
   const [state, setState] = useState({
     curLoc: {
@@ -120,15 +115,7 @@ const Home = ({navigation, route}) => {
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
-  const {
-    curLoc,
-    time,
-    distance,
-    destinationCords,
-    isLoading,
-    coordinate,
-    heading,
-  } = state;
+  const {curLoc, distance, destinationCords, coordinate, heading} = state;
   const updateState = data => setState(state => ({...state, ...data}));
 
   useEffect(() => {
@@ -136,7 +123,6 @@ const Home = ({navigation, route}) => {
   }, []);
   useEffect(() => {
     getInitialLocation();
-    setImc(data.height / data?.width);
   }, []);
   useEffect(() => {
     getInitialLocation();
@@ -187,9 +173,6 @@ const Home = ({navigation, route}) => {
     return () => clearInterval(interval);
   }, []);
 
-  const onPressLocation = () => {
-    navigation.navigate('chooseLocation', {getCordinates: fetchValue});
-  };
   const fetchValue = data => {
     console.log('this is data', data);
     updateState({
@@ -227,21 +210,6 @@ const Home = ({navigation, route}) => {
     });
   };
   const kal = distance.toFixed(0) * 100;
-  const imgFinal = 'data:image/jpeg;base64,' + imgB64;
-  const images = [
-    {
-      name: 'exterior',
-      img: require('../../assets/fille.png'),
-    },
-    {
-      name: 'kitchen',
-      img: require('../../assets/fils.png'),
-    },
-    {
-      name: 'living area',
-      img: require('../../assets/photoTatiana.png'),
-    },
-  ];
 
   const BottomBar = (
     <View
@@ -481,9 +449,6 @@ const Home = ({navigation, route}) => {
           />
         </TouchableOpacity>
       </View>
-      {/* <View style={styles.timerContainer}>
-        <Text style={styles.timer}>{formatTime(timer)}</Text>
-      </View> */}
       <View style={styles.timeView}>
         <Text style={styles.timeText}>{formatTime(timer)}</Text>
         <Text style={styles.timeSousText}>Durée</Text>
@@ -502,20 +467,6 @@ const Home = ({navigation, route}) => {
           <Text style={styles.textRythme}>Rythme moy. (min/km)</Text>
         </View>
       </View>
-      {/* <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-        <View style={{flex: 4}}></View>
-        <View style={styles.buttonView}>
-          <TouchableOpacity style={styles.demarreButton}>
-            <Text style={styles.demarreText}>Démarrer</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground> */}
-      {/* {distance !== 0 && time !== 0 && (
-        <View style={{alignItems: 'center', marginVertical: 16}}>
-          <Text>Time left: {time.toFixed(0)} </Text>
-          <Text>Distance left: {distance.toFixed(0)}</Text>
-        </View>
-      )} */}
       <View style={{flex: 1}}>
         <MapView
           ref={mapRef}
@@ -562,17 +513,10 @@ const Home = ({navigation, route}) => {
                 console.log(`Duration: ${result.duration} min.`);
                 fetchTime(result.distance, result.duration),
                   mapRef.current.fitToCoordinates(result.coordinates, {
-                    edgePadding: {
-                      // right: 30,
-                      // bottom: 300,
-                      // left: 30,
-                      // top: 100,
-                    },
+                    edgePadding: {},
                   });
               }}
-              onError={errorMessage => {
-                // console.log('GOT AN ERROR');
-              }}
+              onError={errorMessage => {}}
             />
           )}
         </MapView>
@@ -623,10 +567,6 @@ const Home = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* <View style={styles.logoView}>
-        <Image source={require('../../assets/carte.png')} style={styles.logo} />
-      </View> */}
     </View>
   );
 
@@ -644,44 +584,6 @@ const Home = ({navigation, route}) => {
             />
           </View>
         </View>
-        {/* <ImageBackground
-          source={require('../../assets/Rectangle.png')}
-          resizeMode="cover"
-          style={[styles.image, {margin: 10}]}>
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <View>
-              <Icon
-                size={20}
-                name="newspaper-variant-multiple-outline"
-                pack="material"
-                color={COLORS.white}
-              />
-            </View>
-            <View style={{marginHorizontal: 10}}>
-              <Text style={{color: COLORS.white}}>Préparation</Text>
-            </View>
-          </View>
-          <Image
-            source={require('../../assets/Controle.png')}
-            style={{alignSelf: 'center', margin: 10}}
-          />
-          <View style={{alignSelf: 'center', marginBottom: 10}}>
-            <Text
-              style={{
-                color: COLORS.white,
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: 16,
-              }}>
-              Comment te sens-tu aujourd’hui?
-            </Text>
-            <Text
-              style={{color: COLORS.white, textAlign: 'center', fontSize: 12}}>
-              Prenez une mesure pour obtenir votre score de préparation pour la
-              journée.
-            </Text>
-          </View>
-        </ImageBackground> */}
         <TouchableOpacity
           style={{
             backgroundColor: COLORS.cartnet.back,
@@ -765,34 +667,6 @@ const Home = ({navigation, route}) => {
             </TouchableOpacity>
           </Carousel>
         </View>
-        {/* <TouchableOpacity
-          style={{
-            backgroundColor: COLORS.cartnet.back,
-            margin: 10,
-            borderRadius: 15,
-            marginBottom: 80,
-          }}
-          onPress={() => navigation.navigate('HealthBook')}>
-          <Text
-            style={{
-              fontSize: 18,
-              color: COLORS.black,
-              fontWeight: 'bold',
-              margin: 10,
-            }}>
-            Mon carnet de santé
-          </Text>
-          <Image
-            source={require('../../assets/doc1.png')}
-            style={{alignSelf: 'center'}}
-          />
-        </TouchableOpacity> */}
-        {/* <View style={{backgroundColor: '#000'}}>
-          <Image
-            source={require('../../assets/Controle.png')}
-            style={{width: '98%', alignSelf: 'center', margin: 10}}
-          />
-        </View> */}
       </ScrollView>
     </View>
   );
@@ -1376,37 +1250,6 @@ const Home = ({navigation, route}) => {
           </View>
         </View>
         <Line />
-        {/* <View style={{margin: 10}}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              color: COLORS.black,
-              marginBottom: 20,
-            }}>
-            Mon entrainement
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{justifyContent: 'center'}}>
-              <Image
-                source={require('../../assets/profile/agenda.png')}
-                style={{alignSelf: 'center'}}
-              />
-            </View>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginHorizontal: 20,
-              }}>
-              <Text style={{alignSelf: 'center'}}>
-                {' '}
-                Aucun entraînement {'\n'} Enregisté
-              </Text>
-            </View>
-          </View>
-        </View> */}
       </ScrollView>
     </View>
   );
@@ -1436,290 +1279,5 @@ const Home = ({navigation, route}) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: windowWidth,
-    height: windowHeight,
-    backgroundColor: COLORS.white,
-  },
-  bottomBarIconActif: {
-    alignSelf: 'center',
-    color: COLORS.button.principal,
-  },
-  BottomBarTextActif: {
-    color: COLORS.button.principal,
-    fontSize: 10,
-    textAlign: 'center',
-  },
-  bottomBarIconNoActif: {
-    alignSelf: 'center',
-    color: COLORS.black,
-  },
-  BottomBarTextNoActif: {
-    color: COLORS.black,
-    fontSize: 10,
-  },
-  logoView: {
-    marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-  },
-  logo: {
-    alignSelf: 'center',
-  },
-  timeView: {
-    alignSelf: 'center',
-  },
-  timeText: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: COLORS.black,
-  },
-  timeSousText: {
-    textAlign: 'center',
-    fontSize: 12,
-  },
-  resultViewGlobal: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-  },
-  nombreDistance: {
-    alignSelf: 'center',
-    color: COLORS.black,
-    fontSize: 34,
-    fontWeight: 'bold',
-  },
-  textDistance: {
-    alignSelf: 'center',
-    fontSize: 10,
-  },
-  nombreCalories: {
-    alignSelf: 'center',
-    color: COLORS.black,
-    fontSize: 34,
-    fontWeight: 'bold',
-  },
-  textCalories: {
-    alignSelf: 'center',
-    fontSize: 10,
-  },
-  textRythme: {
-    alignSelf: 'center',
-    fontSize: 10,
-  },
-  resultCaloriesView: {
-    alignSelf: 'center',
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  signUpBtn: {
-    height: 50,
-    borderRadius: 39,
-    marginVertical: 10,
-    width: '90%',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.button.principal,
-    zIndex: 2,
-    position: 'absolute',
-    flex: 1,
-    bottom: 50,
-  },
-  signUpBtnTxt: {
-    fontSize: 18,
-  },
-  buttonView: {
-    flexDirection: 'center',
-    justifyContent: 'space-between',
-    margin: 10,
-    flex: 1.5,
-    alignSelf: 'center',
-    width: '100%',
-    marginBottom: 10,
-  },
-  iconButton: {
-    backgroundColor: COLORS.button.principal,
-    width: '15%',
-    borderRadius: 34,
-    height: 50,
-    justifyContent: 'center',
-  },
-  demarreButton: {
-    backgroundColor: COLORS.button.principal,
-    width: '80%',
-    borderRadius: 34,
-    height: 50,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: 60,
-  },
-  demarreButtonStop: {
-    backgroundColor: COLORS.button.principal,
-    width: '20%',
-    borderRadius: 34,
-    height: 50,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    bottom: 0,
-  },
-  demarreText: {
-    textAlign: 'center',
-    fontSize: 12,
-    color: COLORS.white,
-    fontWeight: 'bold',
-  },
-  //   History styles start
-  titleImage: {
-    // width: 20,
-  },
-  titleView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: COLORS.black,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.black,
-    marginBottom: 10,
-  },
-  section1View: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray,
-  },
-  selectSection1Button: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  selectSectionText: {
-    fontSize: 14,
-  },
-  selectSectionIconView: {
-    justifyContent: 'center',
-    marginHorizontal: 5,
-  },
-  dateSelectView: {
-    margin: 10,
-    top: 10,
-    marginBottom: 20,
-  },
-  dateSelectText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: COLORS.black,
-  },
-  distanceView: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray,
-  },
-  imageRunningView: {
-    justifyContent: 'center',
-    marginHorizontal: 5,
-  },
-  imageRunningSize: {
-    width: 20,
-    height: 20,
-  },
-  distanceButton: {
-    marginBottom: 10,
-    marginHorizontal: 10,
-  },
-  distanceText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.black,
-  },
-  statText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.black,
-    margin: 10,
-  },
-  statCard: {
-    backgroundColor: '#fff',
-    width: '45%',
-    margin: 10,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  distanceStatCard: {
-    marginBottom: 30,
-    margin: 10,
-    fontSize: 8,
-  },
-  successImageSize: {
-    alignSelf: 'center',
-    marginBottom: 30,
-    margin: 10,
-  },
-  bottomTextStatCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-  },
-  titleBottomTextStatCard: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  sizeBottomTextStatCard: {
-    fontSize: 8,
-  },
-  sizeMinAndKmBottomTextStatCard: {
-    fontSize: 8,
-    fontWeight: 'bold',
-    top: 12,
-  },
-  rowAndCenter: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  rowAndBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  dotStyle: {
-    width: 30,
-    height: 3,
-    backgroundColor: 'silver',
-    marginHorizontal: 3,
-    borderRadius: 3,
-  },
-  images: {
-    height: '100%',
-    width: '100%',
-    borderRadius: 20,
-  },
-  carousel: {
-    height: '100%',
-    width: '100%',
-  },
-  carouselContainer: {
-    height: 400,
-    marginHorizontal: 10,
-  },
-});
 
 export default Home;

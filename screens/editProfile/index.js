@@ -33,15 +33,6 @@ export default function EditProfile({route, navigation}) {
   const [taille, setTaille] = useState(data?.height);
   const [poids, setPoids] = useState(data?.weight);
   const [Spinner, setSpinner] = React.useState(false);
-  console.log('height...........', taille);
-
-  const storeTaille = async imageBase64 => {
-    try {
-      await AsyncStorage.setItem('key', imageBase64);
-    } catch (e) {
-      // saving error
-    }
-  };
 
   const openCamera = async () => {
     ImagePicker.openCamera({
@@ -68,12 +59,12 @@ export default function EditProfile({route, navigation}) {
       });
     });
   };
-  const img = 'data:image/jpeg;base64,' + imageBase64;
   // const myHeaders = new Headers();
   // myHeaders.append('Content-Type', 'application/json');
 
   // const raw = JSON.stringify({
   //   title: 'Mr',
+  //   lastname: 'yoyo',
   // });
 
   // const requestOptions = {
@@ -84,18 +75,24 @@ export default function EditProfile({route, navigation}) {
   // };
 
   // fetch(
-  //   'https://postman-rest-api-learner.glitch.me//api/public/users?username=0987654321&password=1234',
+  //   'https://asante-web.vercel.app/api/public/users?username=12341234&password=1234',
   //   requestOptions,
   // )
   //   .then(response => response.text())
   //   .then(result => console.log(result))
   //   .catch(error => console.error(error));
+  console.log(nom, prenom, localisation, taille, poids, data?.avatar);
   const SendData = () => {
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
 
     const raw = JSON.stringify({
+      firstname: nom,
       lastname: prenom,
+      address: localisation,
+      height: taille,
+      weight: poids,
+      avatar: imageBase64,
     });
 
     const requestOptions = {
@@ -106,7 +103,7 @@ export default function EditProfile({route, navigation}) {
     };
     setSpinner(!Spinner);
     fetch(
-      'https://postman-rest-api-learner.glitch.me//api/public/users?username=12341234&password=1234',
+      'https://asante-web.vercel.app/api/public/users?username=12341234&password=1234',
       requestOptions,
     )
       .then(response => response.json())
@@ -131,29 +128,6 @@ export default function EditProfile({route, navigation}) {
       .catch(error => console.error(error));
   };
 
-  console.debug(imageBase64, taille, poids, nom, prenom, localisation);
-
-  // const myHeaders = new Headers();
-  // myHeaders.append('Content-Type', 'application/json');
-
-  // const raw = JSON.stringify({
-  //   title: 'Mr',
-  // });
-
-  // const requestOptions = {
-  //   method: 'PUT',
-  //   headers: myHeaders,
-  //   body: raw,
-  //   redirect: 'follow',
-  // };
-
-  // fetch(
-  //   'https://postman-rest-api-learner.glitch.me//api/public/users?username=0987654321&password=1234',
-  //   requestOptions,
-  // )
-  //   .then(response => response.text())
-  //   .then(result => console.log(result))
-  //   .catch(error => console.error(error));
   const Loader = (
     <OrientationLoadingOverlay
       visible={Spinner}
@@ -174,7 +148,7 @@ export default function EditProfile({route, navigation}) {
           <View style={{justifyContent: 'center'}}>
             <Image source={require('../../assets/chevron-left.png')} />
           </View>
-          <View style={{justifyContent: 'center', marginHorizontal: 5}}>
+          <View style={styles.headerTextView}>
             <Text style={styles.headerText}>Retour</Text>
           </View>
         </TouchableOpacity>
@@ -182,19 +156,8 @@ export default function EditProfile({route, navigation}) {
       <ScrollView>
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity
-            style={{flexDirection: 'row', marginBottom: 10}}
+            style={styles.changeImageButton}
             onPress={() => pickImage()}>
-            {/* {image ? (
-              <Image
-                source={{uri: image}}
-                style={{width: 100, height: 100, borderRadius: 50}}
-              />
-            ) : (
-              <Image
-                source={{uri: Data.data.user_picture}}
-                style={{width: 100, height: 100, borderRadius: 50}}
-              />
-            )} */}
             {imageBase64 ? (
               <Image
                 source={{uri: imageBase64}}
@@ -210,15 +173,7 @@ export default function EditProfile({route, navigation}) {
               source={require('../../assets/logoSansText.png')}
               style={{width: 100, height: 100, borderRadius: 50}}
             /> */}
-            <View
-              style={{
-                width: 25,
-                height: 25,
-                justifyContent: 'center',
-                borderRadius: 20,
-                top: '19%',
-                marginHorizontal: -20,
-              }}>
+            <View style={styles.editIconView}>
               <Icon
                 style={{alignSelf: 'center'}}
                 name="square-edit-outline"
@@ -229,12 +184,10 @@ export default function EditProfile({route, navigation}) {
             </View>
           </TouchableOpacity>
           <View style={{}}>
-            <Text
-              style={{fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>
+            <Text style={[styles.imageSubtitle, {fontSize: 16}]}>
               {data.firstname} {data.lastname}
             </Text>
-            <Text
-              style={{fontWeight: 'bold', fontSize: 12, textAlign: 'center'}}>
+            <Text style={[styles.imageSubtitle, {fontSize: 14}]}>
               {data.address}
             </Text>
           </View>
@@ -281,38 +234,11 @@ export default function EditProfile({route, navigation}) {
             }}
           />
         </View>
-        {/* <View style={{flexDirection: 'row'}}>
-            <View style={styles.label_Style}>
-              <Text>nomBoite</Text>
-            </View>
-            {Data.data.card_informations.entreprise_name ? (
-              <TextInput
-                style={styles.textInput_form}
-                placeholder={Data.data.card_informations.entreprise_name}
-                placeholderTextColor="#CFCFCF"
-                onChangeText={NomEntreprise => setNomEntreprise(NomEntreprise)}
-              />
-            ) : (
-              <TextInput
-                style={styles.textInput_form}
-                placeholder="le nom de votre entreprise"
-                placeholderTextColor="#CFCFCF"
-                onChangeText={NomEntreprise => setNomEntreprise(NomEntreprise)}
-              />
-            )}
-          </View> */}
 
-        <View style={{alignSelf: 'flex-end', marginHorizontal: 10, top: -10}}>
+        <View style={styles.buttonViewStyle}>
           <TouchableOpacity
             onPress={() => SendData()}
-            style={{
-              backgroundColor: COLORS.button.principal,
-              width: 70,
-              height: 70,
-              borderRadius: 50,
-              justifyContent: 'center',
-              elevation: 5,
-            }}>
+            style={styles.buttonStyle}>
             <Icon
               style={{alignSelf: 'center'}}
               name="check"

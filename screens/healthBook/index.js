@@ -3,16 +3,14 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import {Input, Icon} from '@rneui/themed';
 import {COLORS} from '../../variables/color';
-import Button from '../../components/Button';
+import styles from './style';
 
 const HealthBook = ({navigation, route}) => {
   const {data} = route.params;
@@ -117,26 +115,5 @@ const HealthBook = ({navigation, route}) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  header: {
-    height: 40,
-    flexDirection: 'row',
-    margin: 10,
-  },
-  headerText: {
-    color: COLORS.black,
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    height: 250,
-    top: -10,
-  },
-});
 
 export default HealthBook;
