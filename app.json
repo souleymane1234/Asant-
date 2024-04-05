@@ -1,4 +1,23 @@
 {
   "name": "Asante",
-  "displayName": "Asante"
+  "displayName": "Asante",
+  "expo": {
+    "name": "Asante",
+    "slug": "Asante",
+    "ios": {
+      "bundleIdentifier": "com.Asante"
+    },
+    "android": {
+      "package": "com.Asante"
+    },
+    "runtimeVersion": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "e612fd70-648b-4201-9ba4-db7ab3031024"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e612fd70-648b-4201-9ba4-db7ab3031024"
+    }
+  }
 }
